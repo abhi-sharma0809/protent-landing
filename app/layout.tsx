@@ -7,9 +7,9 @@ import "./globals.css"
 const _geist = Geist({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Protent - AI Sentiment Analysis for Police Bodycams",
+  title: "Protent",
   description:
-    "Real-time AI sentiment analysis for police bodycams. Saving lives and fostering accountability through advanced technology.",
+    "AI intelligence for mission-critical operations.",
   generator: "v0.app",
   icons: {
     icon: [
