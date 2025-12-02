@@ -43,8 +43,8 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$vercel$2f$
 ;
 ;
 const metadata = {
-    title: "Protent - AI Sentiment Analysis for Police Bodycams",
-    description: "Real-time AI sentiment analysis for police bodycams. Saving lives and fostering accountability through advanced technology.",
+    title: "Protent",
+    description: "AI intelligence for mission-critical operations.",
     generator: "v0.app",
     icons: {
         icon: [
