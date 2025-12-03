@@ -13,9 +13,9 @@ export default function Page() {
         <div className="max-w-4xl mx-auto text-center space-y-8 relative py-16">
           <Image src="/protent-logo.png" alt="Protent" width={280} height={64} className="h-16 w-auto mx-auto mb-12" />
 
-          <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-[#ff6600]/10 border border-[#ff6600]/30">
-            <Image src="/yc-logo.png" alt="Y Combinator" width={20} height={20} className="h-5 w-5" />
-            <span className="text-sm font-mono text-[#102c39]">BACKED</span>
+          <div className="inline-flex items-center gap-1 px-5 py-2.5 bg-[#ff6600]/10 border border-[#ff6600]/30">
+            <span className="text-sm font-mono text-[#102c39]">Backed by</span>
+            <Image src="/yc-logo2.png" alt="Y Combinator" width={100} height={20} className="h-7 w-24" />
           </div>
 
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-balance leading-tight pt-4 text-[#102c39]">
