@@ -235,8 +235,8 @@ const ProtentDashboard = () => {
 
 const Logo = () => (
   <div className="flex items-center gap-1 group">
-    <span className="text-2xl font-black tracking-[-0.08em] text-[#142f3d]">protent</span>
-    <div className="w-1.5 h-1.5 bg-[#142f3d] rounded-full mt-2 group-hover:scale-150 transition-transform duration-300" />
+    <span className="text-2xl font-normal tracking-[-0.08em] text-[#142f3d]">protent</span>
+    {/* <div className="w-1.5 h-1.5 bg-[#142f3d] rounded-full mt-2 group-hover:scale-150 transition-transform duration-300" /> */}
   </div>
 );
 
