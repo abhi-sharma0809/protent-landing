@@ -1,0 +1,7 @@
+{
+  "description": "Protent",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "name": "Protent"
+}
