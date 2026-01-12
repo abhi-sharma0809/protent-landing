@@ -394,7 +394,7 @@ const App = () => {
               <span className="italic opacity-40">INVISIBLE.</span>
             </h1>
             <p className="text-xl text-[#142f3d]/70 max-w-md mb-10 leading-relaxed font-medium">
-              Real-time video intelligence for the modern force. Describe any subject in plain English and find them across every active stream, instantly.
+              Real-time video intelligence for the modern force.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="mailto:srihan@protent.ai" className="bg-[#142f3d] text-[#ede9e5] px-10 py-4 rounded-full font-black flex items-center justify-center gap-2 group hover:shadow-2xl hover:translate-y-[-2px] transition-all text-[11px] uppercase tracking-[0.2em]">
@@ -428,7 +428,7 @@ const App = () => {
           <div className="mb-24">
             <h2 className="text-5xl font-black mb-6 tracking-tighter uppercase">Unified Tactical Intelligence</h2>
             <p className="text-[#142f3d]/60 max-w-2xl mx-auto text-lg leading-relaxed font-medium">
-              We monitor live field encounters and urban surveillance in parallel. Describe anything in plain English to locate targets in real-time.
+              We monitor live field encounters and urban surveillance in parallel. Detect escalation and characterize situations in real-time.
             </p>
           </div>
 
