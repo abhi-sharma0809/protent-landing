@@ -372,9 +372,9 @@ const App = () => {
           <button onClick={() => scrollToSection('tracking')} className="hover:text-[#142f3d] transition-colors">Live Search</button>
           <button onClick={() => scrollToSection('compliance')} className="hover:text-[#142f3d] transition-colors">Compliance</button>
         </div>
-        <button className="bg-[#142f3d] text-[#ede9e5] px-6 py-2 rounded-full text-[11px] font-black uppercase tracking-widest hover:bg-[#1c4155] transition-all shadow-lg">
+        <a href="mailto:srihan@protent.ai" className="bg-[#142f3d] text-[#ede9e5] px-6 py-2 rounded-full text-[11px] font-black uppercase tracking-widest hover:bg-[#1c4155] transition-all shadow-lg">
           Get Started
-        </button>
+        </a>
       </nav>
 
       {/* Hero Section */}
@@ -397,12 +397,12 @@ const App = () => {
               Real-time video intelligence for the modern force. Describe any subject in plain English and find them across every active stream, instantly.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="bg-[#142f3d] text-[#ede9e5] px-10 py-4 rounded-full font-black flex items-center justify-center gap-2 group hover:shadow-2xl hover:translate-y-[-2px] transition-all text-[11px] uppercase tracking-[0.2em]">
+              <a href="mailto:srihan@protent.ai" className="bg-[#142f3d] text-[#ede9e5] px-10 py-4 rounded-full font-black flex items-center justify-center gap-2 group hover:shadow-2xl hover:translate-y-[-2px] transition-all text-[11px] uppercase tracking-[0.2em]">
                 Request Pilot
                 <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </button>
+              </a>
               <button onClick={() => scrollToSection('dashboard')} className="border border-[#142f3d]/20 px-10 py-4 rounded-full font-black hover:bg-[#142f3d]/5 transition-all text-[11px] uppercase tracking-[0.2em]">
-                Explore AI
+                See The Difference
               </button>
             </div>
           </motion.div>
