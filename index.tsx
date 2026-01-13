@@ -31,6 +31,73 @@ import {
 } from 'lucide-react';
 
 /**
+ * Scroll-Controlled Video Component
+ * Syncs video playback with scroll position as element enters/leaves viewport
+ */
+const ScrollControlledVideo = ({ 
+  src, 
+  containerRef, 
+  className = "",
+  duration = 8 
+}: { 
+  src: string; 
+  containerRef: React.RefObject<HTMLElement>; 
+  className?: string;
+  duration?: number;
+}) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !containerRef.current) return;
+
+    const updateVideoTime = () => {
+      if (!video || video.readyState < 2) return;
+      const progress = scrollYProgress.get();
+      const clampedProgress = Math.max(0, Math.min(1, progress));
+      const time = clampedProgress * duration;
+      
+      if (Math.abs(video.currentTime - time) > 0.15) {
+        video.currentTime = time;
+      }
+    };
+
+    const unsubscribe = scrollYProgress.on("change", updateVideoTime);
+    
+    const handleLoadedMetadata = () => {
+      updateVideoTime();
+    };
+
+    if (video.readyState >= 2) {
+      updateVideoTime();
+    } else {
+      video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+    }
+
+    return () => {
+      unsubscribe();
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
+  }, [scrollYProgress, duration, containerRef]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className={className}
+      playsInline
+      muted
+      preload="metadata"
+    />
+  );
+};
+
+/**
  * 3D Floating Feed Component
  */
 const FloatingFeed = ({ index, scrollYProgress }: { index: number, scrollYProgress: any }) => {
@@ -65,20 +132,10 @@ const FloatingFeed = ({ index, scrollYProgress }: { index: number, scrollYProgre
  * Suspect Matching Demo
  * Incorporates the specific screenshot scenario: highlighting the girl in the striped sweater on the left.
  */
-const SuspectMatchingDemo = () => {
+const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
-  const [matchFound, setMatchFound] = useState(false);
   const searchQuery = "female child in red and pink striped sweater";
-
-  useEffect(() => {
-    if (isInView) {
-      const timer = setTimeout(() => setMatchFound(true), 1500);
-      return () => clearTimeout(timer);
-    } else {
-      setMatchFound(false);
-    }
-  }, [isInView]);
 
   return (
     <div ref={ref} className="w-full bg-[#0a1820] rounded-2xl border border-[#142f3d]/20 overflow-hidden shadow-2xl font-mono text-[#ede9e5]">
@@ -111,20 +168,13 @@ const SuspectMatchingDemo = () => {
         </div>
       </div>
       
-      <div className="relative aspect-video bg-[#020202] overflow-hidden">
-        {/* Mock Scene Composition (Bridging Station Layout) */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none">
-          <div className="absolute inset-0 flex">
-            <div className="w-1/3 h-full border-r border-white/5 bg-white/[0.02]" />
-            <div className="w-1/3 h-full border-r border-white/5" />
-            <div className="w-1/3 h-full" />
-          </div>
-          {/* Structural Rails from screenshot */}
-          <div className="absolute top-[30%] w-full h-px bg-white/10" />
-          <div className="absolute top-[60%] w-full h-px bg-white/10" />
-          {/* Railing on the left */}
-          <div className="absolute left-0 bottom-0 w-[20%] h-[30%] border-t-2 border-r-2 border-white/5" />
-        </div>
+      <div ref={ref} className="relative aspect-video bg-[#020202] overflow-hidden">
+        <ScrollControlledVideo
+          src="/suspect-match.mp4"
+          containerRef={containerRef}
+          className="absolute inset-0 w-full h-full object-cover"
+          duration={6}
+        />
 
         {/* High-Fidelity Watermark */}
         <div className="absolute top-4 right-6 text-right text-[7px] text-white/60 font-mono tracking-tight leading-relaxed z-10 pointer-events-none">
@@ -132,46 +182,6 @@ const SuspectMatchingDemo = () => {
           AXON BODY 4 D01AC028G
         </div>
 
-        {/* THE TARGET: Girl in striped sweater (Positioned Left per Screenshot) */}
-        <AnimatePresence>
-          {matchFound && (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9, x: -20 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              className="absolute z-30"
-              style={{ 
-                left: '12%',
-                bottom: '10%',
-                width: '90px',
-                height: '160px'
-              }}
-            >
-              {/* Tactical Box */}
-              <div className="absolute inset-0 border-2 border-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.25)]">
-                <div className="absolute -left-1 -top-1 w-2 h-2 border-l border-t border-blue-400" />
-                <div className="absolute -right-1 -top-1 w-2 h-2 border-r border-t border-blue-400" />
-                <div className="absolute -left-1 -bottom-1 w-2 h-2 border-l border-b border-blue-400" />
-                <div className="absolute -right-1 -bottom-1 w-2 h-2 border-r border-b border-blue-400" />
-                
-                <motion.div 
-                  animate={{ opacity: [0.05, 0.2, 0.05] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                  className="absolute inset-0 bg-blue-500/10"
-                />
-              </div>
-
-              {/* Float Tag */}
-              <div className="absolute -top-5 left-0 bg-blue-500 text-black text-[7px] font-black px-1.5 py-0.5 whitespace-nowrap uppercase tracking-wider">
-                ID_MATCH: Child_Striped
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Other People Placeholders (To match screenshot composition) */}
-        <div className="absolute left-[40%] bottom-0 w-[140px] h-[85%] bg-blue-900/5 rounded-t-3xl border-t border-white/5 opacity-40" />
-        <div className="absolute right-[5%] bottom-[10%] w-[100px] h-[180px] border border-white/5 bg-white/[0.01]" />
 
         {/* Status Overlays */}
         <div className="absolute top-4 left-6 z-20 flex flex-col gap-2">
@@ -192,7 +202,7 @@ const SuspectMatchingDemo = () => {
               <span className="text-blue-400/80 font-bold">Latency: 4ms</span>
            </div>
            <div className="text-[8px] font-black uppercase italic tracking-widest text-blue-400">
-              {matchFound ? "Descriptor Lock Acquired" : "Processing real-time stream..."}
+              {isInView ? "Descriptor Lock Acquired" : "Processing real-time stream..."}
            </div>
         </div>
       </div>
@@ -205,38 +215,36 @@ const SuspectMatchingDemo = () => {
   );
 };
 
-const ProtentDashboard = () => {
-  const [escalationScore, setEscalationScore] = useState(42);
-  const [phrases, setPhrases] = useState(['"Step out of the vehicle"', '"Registration and insurance"']);
-  const [objects, setObjects] = useState([
-    { id: 1, label: 'Vehicle', x: 25, y: 40, w: 40, h: 30 },
-    { id: 2, label: 'Subject', x: 55, y: 35, w: 15, h: 45 }
-  ]);
+const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
+  const [escalationScore, setEscalationScore] = useState(64);
+
+  const PHRASE_POOL = [
+    '"Stay back"',
+    '"Watch your hands"',
+    '"You can not touch me"',
+    '"Don’t touch me"',
+    '"Back off"',
+    '"Get away from me"',
+  ];
+
+  const getRandomUniquePhrases = (pool: string[], count: number) => {
+    return [...pool]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, count);
+  };
+
+  const [phrases, setPhrases] = useState(() =>
+    getRandomUniquePhrases(PHRASE_POOL, 3)
+  );
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setEscalationScore(prev => {
-        const change = Math.floor(Math.random() * 5) - 2;
-        return Math.min(100, Math.max(0, prev + change));
-      });
-      
-      setObjects(prev => prev.map(obj => ({
-        ...obj,
-        x: obj.x + (Math.random() - 0.5) * 1,
-        y: obj.y + (Math.random() - 0.5) * 1,
-      })));
-    }, 2000);
-
     const phraseInterval = setInterval(() => {
-      const pool = ['"Stay back"', '"Watch your hands"', '"Copy that"', '"License please"', '"Clear the area"'];
-      setPhrases(prev => [pool[Math.floor(Math.random() * pool.length)], ...prev].slice(0, 3));
+      setPhrases(getRandomUniquePhrases(PHRASE_POOL, 3));
     }, 4500);
 
-    return () => {
-      clearInterval(interval);
-      clearInterval(phraseInterval);
-    };
+    return () => clearInterval(phraseInterval);
   }, []);
+
 
   const getScoreColor = (score: number) => {
     if (score < 40) return '#4ade80'; // Green
@@ -265,7 +273,7 @@ const ProtentDashboard = () => {
               <Activity size={10} /> SIT_SUMMARY
             </div>
             <p className="text-[9px] md:text-[11px] leading-snug md:leading-relaxed italic opacity-80">
-              Active field encounter processing. Monitoring volatility indicators.
+              Active field encounter processing. Hostile man in movie theater.
             </p>
           </div>
 
@@ -292,20 +300,14 @@ const ProtentDashboard = () => {
         </div>
 
         {/* Video Center */}
-        <div className="flex-1 relative bg-black min-h-[150px]">
-          <div className="absolute inset-0 bg-[#ede9e5]/[0.02] grid-bg opacity-10 pointer-events-none" />
-          {objects.map(obj => (
-            <motion.div 
-              key={obj.id}
-              className="absolute border border-blue-400/30 flex flex-col items-start transition-all"
-              style={{ left: `${obj.x}%`, top: `${obj.y}%`, width: `${obj.w}%`, height: `${obj.h}%` }}
-            >
-              <div className="bg-blue-500 text-black text-[6px] md:text-[7px] font-bold px-1 uppercase">
-                {obj.label}
-              </div>
-            </motion.div>
-          ))}
-          <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4">
+        <div className="flex-1 relative bg-black min-h-[150px] overflow-hidden">
+          <ScrollControlledVideo
+            src="/escalating-situation.mp4"
+            containerRef={containerRef}
+            className="absolute inset-0 w-full h-full object-cover"
+            duration={8}
+          />
+          <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 z-10">
              <div className="bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 flex items-center gap-2">
                 <Shield size={8} className="text-green-400" />
                 <span className="text-[7px] md:text-[9px] uppercase tracking-tighter">SOP_GUARD: 98%</span>
@@ -353,6 +355,8 @@ const Logo = () => (
 const App = () => {
   const { scrollYProgress } = useScroll();
   const springScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
+  const dashboardSectionRef = useRef<HTMLElement>(null);
+  const trackingSectionRef = useRef<HTMLElement>(null);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -465,7 +469,7 @@ const App = () => {
       </section>
 
       {/* Situational Dashboard Section */}
-      <section id="dashboard" className="py-24 md:py-32 px-4 md:px-6 overflow-hidden">
+      <section ref={dashboardSectionRef} id="dashboard" className="py-24 md:py-32 px-4 md:px-6 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12 md:mb-16 text-center lg:text-left">
              <div className="inline-block px-4 py-1 rounded-full border border-[#142f3d]/20 text-[#142f3d] text-[9px] font-black uppercase tracking-[0.2em] mb-6">
@@ -476,12 +480,12 @@ const App = () => {
                Proactive analysis for active field encounters. Automate reporting and ensure officer safety with real-time volatility monitoring.
              </p>
           </div>
-          <ProtentDashboard />
+          <ProtentDashboard containerRef={dashboardSectionRef} />
         </div>
       </section>
 
       {/* Suspect Matching Section */}
-      <section id="tracking" className="py-24 md:py-32 px-4 md:px-6 bg-[#142f3d]/5 border-y border-[#142f3d]/5">
+      <section ref={trackingSectionRef} id="tracking" className="py-24 md:py-32 px-4 md:px-6 bg-[#142f3d]/5 border-y border-[#142f3d]/5">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -510,7 +514,7 @@ const App = () => {
             </div>
             <div className="relative">
               <div className="absolute -inset-10 bg-blue-600/5 blur-[80px] rounded-full" />
-              <SuspectMatchingDemo />
+              <SuspectMatchingDemo containerRef={trackingSectionRef} />
             </div>
           </div>
         </div>
