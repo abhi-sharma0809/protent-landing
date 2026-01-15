@@ -93,6 +93,11 @@ const ScrollControlledVideo = ({
       playsInline
       muted
       preload="metadata"
+      style={{
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)',
+        willChange: 'auto'
+      }}
     />
   );
 };
@@ -111,7 +116,10 @@ const FloatingFeed = ({ index, scrollYProgress }: { index: number, scrollYProgre
         y, 
         rotateX, 
         rotateY, 
-        perspective: 1000 
+        perspective: 1000,
+        willChange: 'transform',
+        WebkitTransform: 'translateZ(0)',
+        transform: 'translateZ(0)'
       }}
       className="absolute w-64 h-40 bg-[#142f3d]/90 border border-[#142f3d]/20 rounded-lg overflow-hidden backdrop-blur-sm p-2 shadow-2xl"
     >
@@ -363,8 +371,13 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
     { src: "/video_8.mp4", isEscalating: false },
   ];
 
-  // Auto-detect escalating stream after delay
+  // Check if dashboard section is in view
+  const isInView = useInView(containerRef, { once: false, amount: 0.3, margin: "-100px" });
+
+  // Auto-detect escalating stream after delay - only when scrolled into view
   useEffect(() => {
+    if (!isInView) return; // Don't start animation until section is in view
+
     const timer = setTimeout(() => {
       setEscalatingStreamIndex(5); // Stream at index 5 (6th stream) is escalating
       
@@ -383,7 +396,7 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
     }, 3000); // Wait 3 seconds before detecting escalation
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isInView]);
 
   const handleStreamClick = (index: number) => {
     // Only allow clicking on the escalating stream (index 5)
@@ -425,6 +438,11 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
                 key={index}
                 ref={(el) => (streamRefs.current[index] = el)}
                 onClick={() => isClickable && handleStreamClick(index)}
+                style={{
+                  WebkitTransform: 'translateZ(0)',
+                  transform: 'translateZ(0)',
+                  willChange: isClickable ? 'transform' : 'auto'
+                }}
                 className={`relative bg-[#0a1820] rounded overflow-hidden transition-all ${
                   isEscalating
                     ? "ring-2 ring-red-600 ring-offset-1 ring-offset-[#0a1820] shadow-[0_0_20px_rgba(220,38,38,0.6)] cursor-pointer"
@@ -445,8 +463,8 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
                   </div>
                 )}
                 <div className="absolute bottom-1 left-1 z-10">
-                  <div className="bg-black/60 backdrop-blur px-1.5 py-0.5 rounded border border-white/10">
-                    <span className="text-[6px] uppercase tracking-tighter text-white">STREAM_{index + 1}</span>
+                  <div className="bg-black/60 backdrop-blur px-2 py-1 rounded border border-white/10 min-w-[60px] flex items-center justify-center">
+                    <span className="text-[6px] uppercase tracking-tighter text-white whitespace-nowrap">STREAM_{index + 1}</span>
                   </div>
                 </div>
               </motion.div>
@@ -518,9 +536,10 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
             )}
             <button
               onClick={() => setSelectedStream(null)}
-              className="absolute top-2 md:top-4 right-2 md:right-4 z-10 bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 text-white text-[8px] hover:bg-black/90 transition-colors"
+              className="absolute top-2 md:top-4 right-2 md:right-4 z-10 bg-black/80 backdrop-blur px-4 md:px-6 py-2 rounded border border-white/10 text-white text-[7px] md:text-[9px] uppercase tracking-tighter hover:bg-black/90 hover:border-white/20 transition-all flex items-center gap-1.5"
             >
-              ← Back to Grid
+              <span>←</span>
+              <span>Grid</span>
             </button>
           </motion.div>
 

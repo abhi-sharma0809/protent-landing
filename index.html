@@ -38,6 +38,24 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #142f3d;
         }
+        /* Safari scroll animation fixes */
+        @supports (-webkit-appearance: none) {
+            * {
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            [data-framer-motion] {
+                will-change: transform;
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+            }
+        }
+        /* Force hardware acceleration for animations */
+        .motion-safe\:transform {
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
+            will-change: transform;
+        }
     </style>
 <script type="importmap">
 {
