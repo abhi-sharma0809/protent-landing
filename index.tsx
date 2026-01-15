@@ -215,6 +215,97 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
   );
 };
 
+/**
+ * Auto-playing video component for grid streams
+ */
+const AutoPlayVideo = ({ src, className }: { src: string; className?: string }) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (video) {
+      video.play().catch(() => {
+        // Autoplay may fail, but that's okay
+      });
+    }
+  }, []);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      className={className}
+      playsInline
+      muted
+      loop
+      autoPlay
+    />
+  );
+};
+
+/**
+ * Animated Cursor Component
+ */
+const AnimatedCursor = ({ 
+  targetPosition, 
+  onComplete 
+}: { 
+  targetPosition: { x: number; y: number } | null;
+  onComplete: () => void;
+}) => {
+  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  const [isClicking, setIsClicking] = useState(false);
+
+  useEffect(() => {
+    if (!targetPosition) return;
+
+    // Move cursor to target position
+    const moveTimeout = setTimeout(() => {
+      setPosition(targetPosition);
+    }, 500);
+
+    // Click animation
+    const clickTimeout = setTimeout(() => {
+      setIsClicking(true);
+      setTimeout(() => {
+        setIsClicking(false);
+        setTimeout(() => {
+          onComplete();
+        }, 300);
+      }, 200);
+    }, 1500);
+
+    return () => {
+      clearTimeout(moveTimeout);
+      clearTimeout(clickTimeout);
+    };
+  }, [targetPosition, onComplete]);
+
+  if (!position) return null;
+
+  return (
+    <motion.div
+      className="fixed z-50 pointer-events-none"
+      style={{
+        left: position.x,
+        top: position.y,
+      }}
+      initial={{ opacity: 0, scale: 0 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0 }}
+    >
+      <motion.div
+        className="w-4 h-4 border-2 border-white rounded-full bg-white/20 backdrop-blur-sm"
+        animate={{
+          scale: isClicking ? 0.8 : 1,
+        }}
+        transition={{ duration: 0.2 }}
+      />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-white rounded-full" />
+    </motion.div>
+  );
+};
+
 const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
   const [escalationScore, setEscalationScore] = useState(64);
 
@@ -252,6 +343,62 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
     return '#ef4444'; // Red
   };
 
+  // Add state variables
+  const [selectedStream, setSelectedStream] = useState<number | null>(null);
+  const [escalatingStreamIndex, setEscalatingStreamIndex] = useState<number | null>(null);
+  const [showCursor, setShowCursor] = useState(false);
+  const [cursorTarget, setCursorTarget] = useState<{ x: number; y: number } | null>(null);
+  const streamRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Streams configuration - escalating stream is at index 5 (6th stream)
+  const streams = [
+    { src: "/video_1.mp4", isEscalating: false },
+    { src: "/video_2.mp4", isEscalating: false },
+    { src: "/video_3.mp4", isEscalating: false },
+    { src: "/video_4.mp4", isEscalating: false },
+    { src: "/video_5.mp4", isEscalating: false },
+    { src: "/escalating-situation.mp4", isEscalating: true },
+    { src: "/video_6.mp4", isEscalating: false },
+    { src: "/video_7.mp4", isEscalating: false },
+    { src: "/video_8.mp4", isEscalating: false },
+  ];
+
+  // Auto-detect escalating stream after delay
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setEscalatingStreamIndex(5); // Stream at index 5 (6th stream) is escalating
+      
+      // After highlighting, show cursor and click
+      setTimeout(() => {
+        const streamElement = streamRefs.current[5];
+        if (streamElement) {
+          const rect = streamElement.getBoundingClientRect();
+          setCursorTarget({
+            x: rect.left + rect.width / 2,
+            y: rect.top + rect.height / 2,
+          });
+          setShowCursor(true);
+        }
+      }, 2000);
+    }, 3000); // Wait 3 seconds before detecting escalation
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleStreamClick = (index: number) => {
+    // Only allow clicking on the escalating stream (index 5)
+    if (index === 5) {
+      setSelectedStream(index);
+    }
+  };
+
+  const handleCursorComplete = () => {
+    setSelectedStream(5); // Select the escalating stream (6th stream)
+    setShowCursor(false);
+  };
+
+  const selectedStreamData = selectedStream !== null ? streams[selectedStream] : null;
+
   return (
     <div className="relative w-full aspect-video md:aspect-[16/9] lg:aspect-video bg-[#0a1820] rounded-2xl overflow-hidden border border-[#142f3d]/20 shadow-2xl flex flex-col font-mono text-[#ede9e5]">
       {/* Top Status Bar */}
@@ -265,63 +412,130 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Left Panel */}
-        <div className="w-full md:w-48 lg:w-60 border-b md:border-b-0 md:border-r border-white/5 p-2 md:p-4 flex md:flex-col gap-4 md:gap-6 bg-white/[0.01] overflow-x-auto md:overflow-x-visible">
-          <div className="flex-1 min-w-[140px]">
-            <div className="text-[7px] md:text-[9px] opacity-40 mb-1 md:mb-2 flex items-center gap-1.5 uppercase font-bold">
-              <Activity size={10} /> SIT_SUMMARY
-            </div>
-            <p className="text-[9px] md:text-[11px] leading-snug md:leading-relaxed italic opacity-80">
-              Active field encounter processing. Hostile man in movie theater.
-            </p>
-          </div>
-
-          <div className="flex-1 min-w-[140px]">
-            <div className="text-[7px] md:text-[9px] opacity-40 mb-1 md:mb-2 flex items-center gap-1.5 uppercase font-bold">
-              <Mic size={10} /> KEY_PHRASES
-            </div>
-            <div className="space-y-1 md:space-y-2">
-              <AnimatePresence mode="popLayout">
-                {phrases.slice(0, 2).map((phrase) => (
-                  <motion.div 
-                    key={phrase}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    className="text-[8px] md:text-[10px] bg-white/[0.05] border border-white/5 rounded p-1 md:p-2 text-blue-300 truncate font-medium"
-                  >
-                    {phrase}
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
+      {selectedStream === null ? (
+        /* Grid View - 9 Streams */
+        <div className="flex-1 relative bg-black min-h-[150px] overflow-hidden p-2">
+          <div className="grid grid-cols-3 grid-rows-3 gap-1 h-full w-full">
+            {streams.map((stream, index) => {
+              const isEscalating = escalatingStreamIndex === index;
+              const isClickable = isEscalating;
+              
+              return (
+              <motion.div
+                key={index}
+                ref={(el) => (streamRefs.current[index] = el)}
+                onClick={() => isClickable && handleStreamClick(index)}
+                className={`relative bg-[#0a1820] rounded overflow-hidden transition-all ${
+                  isEscalating
+                    ? "ring-2 ring-red-600 ring-offset-1 ring-offset-[#0a1820] shadow-[0_0_20px_rgba(220,38,38,0.6)] cursor-pointer"
+                    : "border border-white/10 cursor-not-allowed opacity-60"
+                }`}
+                whileHover={isClickable ? { scale: 1.02 } : {}}
+                whileTap={isClickable ? { scale: 0.98 } : {}}
+              >
+                <AutoPlayVideo
+                  src={stream.src}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {escalatingStreamIndex === index && (
+                  <div className="absolute top-1 left-1 z-10">
+                    <div className="bg-red-600 px-1.5 py-0.5 rounded text-[6px] font-black text-white flex items-center gap-1 animate-pulse shadow-lg">
+                      <div className="w-0.5 h-0.5 rounded-full bg-white" /> ESCALATING
+                    </div>
+                  </div>
+                )}
+                <div className="absolute bottom-1 left-1 z-10">
+                  <div className="bg-black/60 backdrop-blur px-1.5 py-0.5 rounded border border-white/10">
+                    <span className="text-[6px] uppercase tracking-tighter text-white">STREAM_{index + 1}</span>
+                  </div>
+                </div>
+              </motion.div>
+              );
+            })}
           </div>
         </div>
+      ) : (
+        /* Expanded View with Sidebar */
+        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+          {/* Left Panel */}
+          <div className="w-full md:w-48 lg:w-60 border-b md:border-b-0 md:border-r border-white/5 p-2 md:p-4 flex md:flex-col gap-4 md:gap-6 bg-white/[0.01] overflow-x-auto md:overflow-x-visible">
+            <div className="flex-1 min-w-[140px]">
+              <div className="text-[7px] md:text-[9px] opacity-40 mb-1 md:mb-2 flex items-center gap-1.5 uppercase font-bold">
+                <Activity size={10} /> SIT_SUMMARY
+              </div>
+              <p className="text-[9px] md:text-[11px] leading-snug md:leading-relaxed italic opacity-80">
+                Active field encounter processing. Hostile man in movie theater.
+              </p>
+            </div>
 
-        {/* Video Center */}
-        <div className="flex-1 relative bg-black min-h-[150px] overflow-hidden">
-          <ScrollControlledVideo
-            src="/escalating-situation.mp4"
-            containerRef={containerRef}
-            className="absolute inset-0 w-full h-full object-cover"
-            duration={8}
-          />
-          <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 z-10">
-             <div className="bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 flex items-center gap-2">
+            <div className="flex-1 min-w-[140px]">
+              <div className="text-[7px] md:text-[9px] opacity-40 mb-1 md:mb-2 flex items-center gap-1.5 uppercase font-bold">
+                <Mic size={10} /> KEY_PHRASES
+              </div>
+              <div className="space-y-1 md:space-y-2">
+                <AnimatePresence mode="popLayout">
+                  {phrases.slice(0, 2).map((phrase) => (
+                    <motion.div 
+                      key={phrase}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      className="text-[8px] md:text-[10px] bg-white/[0.05] border border-white/5 rounded p-1 md:p-2 text-blue-300 truncate font-medium"
+                    >
+                      {phrase}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </div>
+            </div>
+          </div>
+
+          {/* Video Center - Expanded */}
+          <motion.div 
+            className="flex-1 relative bg-black min-h-[150px] overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <ScrollControlledVideo
+              src={selectedStreamData?.src || ""}
+              containerRef={containerRef}
+              className="absolute inset-0 w-full h-full object-cover"
+              duration={8}
+            />
+            <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 z-10">
+              <div className="bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 flex items-center gap-2">
                 <Shield size={8} className="text-green-400" />
                 <span className="text-[7px] md:text-[9px] uppercase tracking-tighter">SOP_GUARD: 98%</span>
-             </div>
-          </div>
-        </div>
+              </div>
+            </div>
+            {selectedStreamData?.isEscalating && (
+              <div className="absolute top-2 md:top-4 left-2 md:left-4 z-10">
+                <div className="bg-red-600 px-2 md:px-3 py-1 rounded text-[8px] font-black text-white flex items-center gap-1.5 animate-pulse shadow-lg">
+                  <div className="w-1 h-1 rounded-full bg-white" /> ESCALATING
+                </div>
+              </div>
+            )}
+            <button
+              onClick={() => setSelectedStream(null)}
+              className="absolute top-2 md:top-4 right-2 md:right-4 z-10 bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 text-white text-[8px] hover:bg-black/90 transition-colors"
+            >
+              ← Back to Grid
+            </button>
+          </motion.div>
 
-        {/* Right Panel - Gauge */}
-        <div className="w-full md:w-48 lg:w-56 border-t md:border-t-0 md:border-l border-white/5 p-2 md:p-4 flex md:flex-col items-center justify-center md:justify-start bg-white/[0.01]">
-          <div className="text-[7px] md:text-[9px] opacity-40 md:mb-6 flex items-center gap-1.5 uppercase font-bold tracking-widest">
-            <AlertTriangle size={10} /> ESCALATION
-          </div>
-          <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 flex items-center justify-center">
-             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+          {/* Right Panel - Gauge */}
+          <motion.div 
+            className="w-full md:w-48 lg:w-56 border-t md:border-t-0 md:border-l border-white/5 p-2 md:p-4 flex md:flex-col items-center justify-center md:justify-start bg-white/[0.01]"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="text-[7px] md:text-[9px] opacity-40 md:mb-6 flex items-center gap-1.5 uppercase font-bold tracking-widest">
+              <AlertTriangle size={10} /> ESCALATION
+            </div>
+            <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 lg:w-36 lg:h-36 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                 <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="6" fill="transparent" className="text-white/5" />
                 <motion.circle 
                   cx="50" cy="50" r="45" 
@@ -333,14 +547,22 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
                   strokeLinecap="round"
                   transition={{ duration: 1 }}
                 />
-             </svg>
-             <div className="absolute flex flex-col items-center">
+              </svg>
+              <div className="absolute flex flex-col items-center">
                 <span className="text-lg md:text-2xl lg:text-3xl font-black transition-colors" style={{ color: getScoreColor(escalationScore) }}>{escalationScore}</span>
                 <span className="text-[6px] md:text-[8px] opacity-40 font-bold uppercase tracking-widest">Index</span>
-             </div>
-          </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
+      )}
+
+      {/* Animated Cursor */}
+      <AnimatePresence>
+        {showCursor && cursorTarget && (
+          <AnimatedCursor targetPosition={cursorTarget} onComplete={handleCursorComplete} />
+        )}
+      </AnimatePresence>
     </div>
   );
 };
