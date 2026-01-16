@@ -143,7 +143,7 @@ const FloatingFeed = ({ index, scrollYProgress }: { index: number, scrollYProgre
 const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<HTMLElement> }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
-  const searchQuery = "female child in red and pink striped sweater";
+  const searchQuery = "Missing Person: female child in red and pink striped sweater";
 
   return (
     <div ref={ref} className="w-full bg-[#0a1820] rounded-2xl border border-[#142f3d]/20 overflow-hidden shadow-2xl font-mono text-[#ede9e5]">
