@@ -31,8 +31,8 @@ import {
 } from 'lucide-react';
 
 /**
- * Scroll-Controlled Video Component
- * Syncs video playback with scroll position as element enters/leaves viewport
+ * Auto-playing Video Component
+ * Plays video automatically on loop
  */
 const ScrollControlledVideo = ({ 
   src, 
@@ -46,44 +46,15 @@ const ScrollControlledVideo = ({
   duration?: number;
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
-  
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video || !containerRef.current) return;
-
-    const updateVideoTime = () => {
-      if (!video || video.readyState < 2) return;
-      const progress = scrollYProgress.get();
-      const clampedProgress = Math.max(0, Math.min(1, progress));
-      const time = clampedProgress * duration;
-      
-      if (Math.abs(video.currentTime - time) > 0.15) {
-        video.currentTime = time;
-      }
-    };
-
-    const unsubscribe = scrollYProgress.on("change", updateVideoTime);
-    
-    const handleLoadedMetadata = () => {
-      updateVideoTime();
-    };
-
-    if (video.readyState >= 2) {
-      updateVideoTime();
-    } else {
-      video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
+    if (video) {
+      video.play().catch(() => {
+        // Autoplay may fail, but that's okay
+      });
     }
-
-    return () => {
-      unsubscribe();
-      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
-    };
-  }, [scrollYProgress, duration, containerRef]);
+  }, []);
 
   return (
     <video
@@ -92,7 +63,9 @@ const ScrollControlledVideo = ({
       className={className}
       playsInline
       muted
-      preload="metadata"
+      loop
+      autoPlay
+      preload="auto"
       style={{
         WebkitTransform: 'translateZ(0)',
         transform: 'translateZ(0)',
@@ -144,7 +117,6 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
   const searchQuery = "Missing Person: female child in red and pink striped sweater";
-
   return (
     <div ref={ref} className="w-full bg-[#0a1820] rounded-2xl border border-[#142f3d]/20 overflow-hidden shadow-2xl font-mono text-[#ede9e5]">
       {/* Search Input Simulation */}
@@ -202,7 +174,7 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
         </div>
 
         {/* Telemetry Bar */}
-        <div className="absolute bottom-0 w-full h-10 bg-black/80 backdrop-blur-xl border-t border-white/5 flex items-center px-4 justify-between text-[9px] z-20">
+        {/* <div className="absolute bottom-0 w-full h-10 bg-black/80 backdrop-blur-xl border-t border-white/5 flex items-center px-4 justify-between text-[9px] z-20">
            <div className="flex gap-4 items-center">
               <span className="opacity-40 uppercase font-black tracking-widest flex items-center gap-1.5">
                 <Signal size={10} className="text-green-500" /> Active Frame Scan
@@ -212,12 +184,12 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
            <div className="text-[8px] font-black uppercase italic tracking-widest text-blue-400">
               {isInView ? "Descriptor Lock Acquired" : "Processing real-time stream..."}
            </div>
-        </div>
+        </div> */}
       </div>
       
       {/* Regulatory/Feature Disclaimer */}
       <div className="p-3 bg-white/[0.02] text-[7px] opacity-30 text-center font-bold uppercase tracking-[0.25em]">
-        Natural language search operates solely on live streams. No archival data is indexed or preserved for matching.
+        {/* Natural language search operates solely on live streams. No archival data is indexed or preserved for matching. */}
       </div>
     </div>
   );
@@ -643,7 +615,7 @@ const App = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <a href="mailto:srihan@protent.ai" className="bg-[#142f3d] text-[#ede9e5] px-10 py-4 rounded-full font-black flex items-center justify-center gap-2 group hover:shadow-2xl hover:translate-y-[-2px] transition-all text-[11px] uppercase tracking-[0.2em]">
-                Request Pilot
+                Request Demo
                 <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </a>
               <button onClick={() => scrollToSection('dashboard')} className="border border-[#142f3d]/20 px-10 py-4 rounded-full font-black hover:bg-[#142f3d]/5 transition-all text-[11px] uppercase tracking-[0.2em]">
