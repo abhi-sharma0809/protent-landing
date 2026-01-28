@@ -6,7 +6,8 @@ import {
   useTransform, 
   useSpring, 
   AnimatePresence,
-  useInView
+  useInView,
+  animate
 } from 'framer-motion';
 import { 
   Shield, 
@@ -117,26 +118,39 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
   const ref = useRef(null);
   const isInView = useInView(ref, { once: false, amount: 0.3 });
   const searchQuery = "Missing Person: female child in red and pink striped sweater";
+  const [visibleLength, setVisibleLength] = useState(0);
+
+  // Type character by character so text fills first line then wraps to second
+  useEffect(() => {
+    if (!isInView) {
+      setVisibleLength(0);
+      return;
+    }
+    const controls = animate(0, searchQuery.length, {
+      duration: 2.5,
+      ease: "easeOut",
+      onUpdate: (value) => setVisibleLength(Math.round(value)),
+    });
+    return () => controls.stop();
+  }, [isInView, searchQuery.length]);
+
   return (
     <div ref={ref} className="w-full bg-[#0a1820] rounded-2xl border border-[#142f3d]/20 overflow-hidden shadow-2xl font-mono text-[#ede9e5]">
-      {/* Search Input Simulation */}
+      {/* Search Input Simulation - types char by char, wraps to second line as needed */}
       <div className="p-4 bg-white/[0.03] border-b border-white/5">
-        <div className="flex items-center gap-3 mb-2">
-          <Search size={14} className="text-blue-400" />
-          <div className="flex-1 bg-black/60 rounded px-3 py-2 border border-white/10 flex items-center gap-2 overflow-hidden shadow-inner">
-            <motion.span 
-              initial={{ width: 0 }}
-              animate={isInView ? { width: "auto" } : { width: 0 }}
-              transition={{ duration: 2.5, ease: "easeOut" }}
-              className="text-[10px] text-blue-300 overflow-hidden whitespace-nowrap font-medium"
-            >
-               {searchQuery}
-            </motion.span>
-            <motion.div 
-              animate={{ opacity: [0, 1, 0] }}
-              transition={{ repeat: Infinity, duration: 0.8 }}
-              className="w-[1px] h-3 bg-blue-300" 
-            />
+        <div className="flex items-center gap-3 mb-2 min-w-0">
+          <Search size={14} className="text-blue-400 shrink-0" />
+          <div className="flex-1 min-w-0 bg-black/60 rounded px-3 py-2 border border-white/10 flex items-center gap-2 overflow-hidden shadow-inner">
+            <span className="text-[10px] text-blue-300 font-medium whitespace-normal md:whitespace-nowrap break-words">
+              {searchQuery.slice(0, visibleLength)}
+            </span>
+            {visibleLength > 0 && (
+              <motion.div 
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ repeat: Infinity, duration: 0.8 }}
+                className="w-[1px] h-3 bg-blue-300 shrink-0 self-center" 
+              />
+            )}
           </div>
         </div>
         <div className="flex items-center justify-between text-[8px] opacity-40 uppercase tracking-[0.2em] font-black">
@@ -445,10 +459,10 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
           </div>
         </div>
       ) : (
-        /* Expanded View with Sidebar */
+        /* Expanded View - video only on mobile, with sidebars on md+ */
         <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-          {/* Left Panel */}
-          <div className="w-full md:w-48 lg:w-60 border-b md:border-b-0 md:border-r border-white/5 p-2 md:p-4 flex md:flex-col gap-4 md:gap-6 bg-white/[0.01] overflow-x-auto md:overflow-x-visible">
+          {/* Left Panel - hidden on mobile */}
+          <div className="hidden md:flex w-full md:w-48 lg:w-60 border-b md:border-b-0 md:border-r border-white/5 p-2 md:p-4 flex-col gap-4 md:gap-6 bg-white/[0.01] overflow-x-auto md:overflow-x-visible">
             <div className="flex-1 min-w-[140px]">
               <div className="text-[7px] md:text-[9px] opacity-40 mb-1 md:mb-2 flex items-center gap-1.5 uppercase font-bold">
                 <Activity size={10} /> SIT_SUMMARY
@@ -493,14 +507,15 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
               className="absolute inset-0 w-full h-full object-cover"
               duration={8}
             />
-            <div className="absolute bottom-2 md:bottom-4 left-2 md:left-4 z-10">
+            {/* SOP badge & ESCALATING - hidden on mobile */}
+            <div className="hidden md:flex absolute bottom-2 md:bottom-4 left-2 md:left-4 z-10">
               <div className="bg-black/80 backdrop-blur px-2 md:px-3 py-1 rounded border border-white/10 flex items-center gap-2">
                 <Shield size={8} className="text-green-400" />
                 <span className="text-[7px] md:text-[9px] uppercase tracking-tighter">SOP_GUARD: 98%</span>
               </div>
             </div>
             {selectedStreamData?.isEscalating && (
-              <div className="absolute top-2 md:top-4 left-2 md:left-4 z-10">
+              <div className="hidden md:block absolute top-2 md:top-4 left-2 md:left-4 z-10">
                 <div className="bg-red-600 px-2 md:px-3 py-1 rounded text-[8px] font-black text-white flex items-center gap-1.5 animate-pulse shadow-lg">
                   <div className="w-1 h-1 rounded-full bg-white" /> ESCALATING
                 </div>
@@ -515,9 +530,9 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
             </button>
           </motion.div>
 
-          {/* Right Panel - Gauge */}
+          {/* Right Panel - Gauge - hidden on mobile */}
           <motion.div 
-            className="w-full md:w-48 lg:w-56 border-t md:border-t-0 md:border-l border-white/5 p-2 md:p-4 flex md:flex-col items-center justify-center md:justify-start bg-white/[0.01]"
+            className="hidden md:flex w-full md:w-48 lg:w-56 border-t md:border-t-0 md:border-l border-white/5 p-2 md:p-4 flex-col items-center justify-center md:justify-start bg-white/[0.01]"
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
