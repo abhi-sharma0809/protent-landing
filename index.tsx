@@ -140,17 +140,18 @@ const SuspectMatchingDemo = ({ containerRef }: { containerRef: React.RefObject<H
       <div className="p-4 bg-white/[0.03] border-b border-white/5">
         <div className="flex items-center gap-3 mb-2 min-w-0">
           <Search size={14} className="text-blue-400 shrink-0" />
-          <div className="flex-1 min-w-0 bg-black/60 rounded px-3 py-2 border border-white/10 flex items-center gap-2 overflow-hidden shadow-inner">
-            <span className="text-[10px] text-blue-300 font-medium whitespace-normal md:whitespace-nowrap break-words">
+          <div className="flex-1 min-w-0 bg-black/60 rounded px-3 py-2 border border-white/10 overflow-hidden shadow-inner">
+            <span className="text-[10px] text-blue-300 font-medium whitespace-normal md:whitespace-nowrap break-words inline">
               {searchQuery.slice(0, visibleLength)}
+              {visibleLength > 0 && (
+                <motion.span
+                  animate={{ opacity: [0, 1, 0] }}
+                  transition={{ repeat: Infinity, duration: 0.8 }}
+                  className="inline-block w-[2px] h-3 bg-blue-300 align-middle ml-0.5"
+                  style={{ verticalAlign: 'middle' }}
+                />
+              )}
             </span>
-            {visibleLength > 0 && (
-              <motion.div 
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ repeat: Infinity, duration: 0.8 }}
-                className="w-[1px] h-3 bg-blue-300 shrink-0 self-center" 
-              />
-            )}
           </div>
         </div>
         <div className="flex items-center justify-between text-[8px] opacity-40 uppercase tracking-[0.2em] font-black">
