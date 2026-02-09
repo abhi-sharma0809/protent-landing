@@ -585,7 +585,7 @@ const App = () => {
             <span className="flex h-2 w-2 bg-emerald-500 animate-pulse" />
             <span>Status: Operational</span>
             <span className="border-l border-white/20 pl-4">Loc: 34.0522° N, 118.2437° W</span>
-            <span className="border-l border-white/20 pl-4 text-white/80">Ref: PROTENT_V4.0</span>
+            <span className="border-l border-white/20 pl-4 text-white/80">Ref: PROTENT_V1</span>
           </div>
           <h1 className="text-7xl md:text-9xl font-black text-white uppercase tracking-tighter leading-none mb-6">
             Intelligence <br />
