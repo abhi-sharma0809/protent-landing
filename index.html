@@ -9,36 +9,61 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
+        /* Defense Industrial: Zero curvature globally */
+        *, *::before, *::after {
+            border-radius: 0 !important;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #ede9e5;
-            color: #142f3d;
+            background-color: #000000;
+            color: #ffffff;
             overflow-x: hidden;
         }
+        /* Grid-lines only. No gradients. */
         .grid-bg {
-            background-image: linear-gradient(rgba(20, 47, 61, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(20, 47, 61, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
+            background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        /* Crosshair corner motif for panels */
+        .crosshair-corners::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-left: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
+        }
+        .crosshair-corners::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-right: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
         }
         ::selection {
-            background: #142f3d;
-            color: #ede9e5;
+            background: rgba(255,255,255,0.15);
+            color: #ffffff;
         }
-        /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #ede9e5;
+            background: #000000;
         }
         ::-webkit-scrollbar-thumb {
-            background: #dcd7d1;
-            border-radius: 4px;
+            background: rgba(255,255,255,0.15);
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #142f3d;
+            background: rgba(255,255,255,0.25);
         }
-        /* Safari scroll animation fixes */
         @supports (-webkit-appearance: none) {
             * {
                 -webkit-transform: translateZ(0);
@@ -50,7 +75,6 @@
                 backface-visibility: hidden;
             }
         }
-        /* Force hardware acceleration for animations */
         .motion-safe\:transform {
             -webkit-transform: translateZ(0);
             transform: translateZ(0);
