@@ -587,7 +587,7 @@ const App = () => {
             <span className="border-l border-white/20 pl-4">Loc: 34.0522° N, 118.2437° W</span>
             <span className="border-l border-white/20 pl-4 text-white/80">Ref: PROTENT_V1</span>
           </div>
-          <h1 className="text-7xl md:text-9xl font-black text-white uppercase tracking-tighter leading-none mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-white uppercase tracking-tighter leading-tight mb-6">
             Intelligence <br />
             <span className="text-white/40">Without Compromise.</span>
           </h1>
@@ -603,12 +603,6 @@ const App = () => {
               See Tactical Intelligence
             </button>
           </div>
-        </div>
-        <div className="absolute bottom-10 left-6 right-6 flex justify-between items-end border-t border-white/10 pt-4">
-          <div className="font-mono text-[10px] text-white/30 uppercase tracking-widest">
-            Build: 2026.02.09 // Secured
-          </div>
-          <div className="w-32 h-[1px] bg-white/40" />
         </div>
       </section>
 
