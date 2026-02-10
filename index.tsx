@@ -547,7 +547,7 @@ const LogoMark = () => (
 const Logo = () => (
   <div className="flex items-center gap-2.5">
     <LogoMark />
-    <span className="text-2xl font-black tracking-tighter uppercase text-white">protent</span>
+    <span className="text-2xl font-black tracking-wide uppercase text-white">protent</span>
   </div>
 );
 
@@ -587,7 +587,7 @@ const App = () => {
             <span className="border-l border-white/20 pl-4">Loc: 34.0522° N, 118.2437° W</span>
             <span className="border-l border-white/20 pl-4 text-white/80">Ref: PROTENT_V1</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-white uppercase tracking-tighter leading-tight mb-6">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-black text-white uppercase tracking-wide leading-tight mb-6">
             Intelligence <br />
             <span className="text-white/40">Without Compromise.</span>
           </h1>
@@ -609,7 +609,7 @@ const App = () => {
       <section id="product" className="py-32 px-6 border-y border-white/10 bg-black">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-24">
-            <h2 className="text-5xl font-black mb-6 tracking-tighter uppercase text-white">Unified Tactical Intelligence</h2>
+            <h2 className="text-5xl font-black mb-6 tracking-wide uppercase text-white">Unified Tactical Intelligence</h2>
             <p className="text-white/60 max-w-2xl mx-auto text-lg leading-relaxed font-mono tracking-widest uppercase">
               We monitor live field encounters and urban surveillance in parallel. Detect escalation and characterize situations in real-time.
             </p>
@@ -639,7 +639,7 @@ const App = () => {
                 className="p-10 border border-white/10 bg-black hover:border-white/20 transition-colors"
               >
                 <div className="mb-6 opacity-80">{feature.icon}</div>
-                <h3 className="text-xl font-black mb-4 tracking-tighter uppercase text-white">{feature.title}</h3>
+                <h3 className="text-xl font-black mb-4 tracking-wide uppercase text-white">{feature.title}</h3>
                 <p className="text-white/60 leading-relaxed font-mono tracking-widest text-sm">{feature.desc}</p>
               </motion.div>
             ))}
@@ -653,7 +653,7 @@ const App = () => {
              <div className="inline-block px-4 py-1 border border-white/10 text-white/50 text-[9px] font-mono tracking-widest uppercase mb-6">
                Situational Awareness
              </div>
-             <h2 className="text-4xl md:text-7xl font-black mb-6 md:mb-8 tracking-tighter leading-[0.85] uppercase text-white">Real-Time<br /><span className="text-white/40">Assistance.</span></h2>
+             <h2 className="text-4xl md:text-7xl font-black mb-6 md:mb-8 tracking-wide leading-[0.85] uppercase text-white">Real-Time<br /><span className="text-white/40">Assistance.</span></h2>
              <p className="text-white/60 max-w-xl text-base md:text-lg mb-8 md:mb-10 leading-relaxed font-mono tracking-widest uppercase">
                Proactive analysis for active field encounters. Automate reporting and ensure officer safety with real-time volatility monitoring.
              </p>
@@ -669,7 +669,7 @@ const App = () => {
               <div className="inline-block px-4 py-1 border border-white/10 text-white/50 text-[9px] font-mono tracking-widest uppercase mb-6">
                 Active Monitoring
               </div>
-              <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tighter leading-tight uppercase text-white">Live stream <br />search.</h2>
+              <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-wide leading-tight uppercase text-white">Live stream <br />search.</h2>
               <p className="text-lg text-white/60 mb-10 leading-relaxed font-mono tracking-widest uppercase">
                 Protent does not look through the past—it watches the present. Describe what you're looking for, and our engine monitors every active bodycam and CCTV feed for a match, without indexing historical footage.
               </p>
@@ -682,7 +682,7 @@ const App = () => {
                   <div key={i} className="flex gap-4">
                     <div className="mt-1"><CheckCircle className="text-white w-5 h-5" /></div>
                     <div>
-                      <h4 className="font-black text-white text-base uppercase tracking-tighter mb-1">{item.label}</h4>
+                      <h4 className="font-black text-white text-base uppercase tracking-wide mb-1">{item.label}</h4>
                       <p className="text-white/50 text-xs font-mono tracking-widest">{item.desc}</p>
                     </div>
                   </div>
@@ -703,7 +703,7 @@ const App = () => {
               <div className="w-16 h-16 border border-white/10 flex items-center justify-center mx-auto lg:mx-0">
                 <Lock className="text-white w-8 h-8" />
               </div>
-              <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-tighter leading-tight uppercase mt-8">CJIS Compliant.</h2>
+              <h2 className="text-5xl md:text-6xl font-black mb-6 tracking-wide leading-tight uppercase mt-8">CJIS Compliant.</h2>
               <p className="text-lg text-white/60 mb-10 leading-relaxed font-mono tracking-widest uppercase">
                 Security is hardcoded into our architecture. Protent is fully CJIS Compliant, ensuring secure and lawful handling of all intelligence data.
               </p>
@@ -716,7 +716,7 @@ const App = () => {
             </div>
             
             <div className="border border-white/10 p-10 relative overflow-hidden crosshair-corners">
-               <h3 className="text-2xl md:text-3xl font-black mb-6 tracking-tighter text-white uppercase">Secure Intelligence.</h3>
+               <h3 className="text-2xl md:text-3xl font-black mb-6 tracking-wide text-white uppercase">Secure Intelligence.</h3>
                <p className="text-white/60 text-sm font-mono leading-relaxed mb-8 tracking-widest uppercase">
                  Minimize risk with end-to-end encrypted cloud storage. Built to survive the demands of legal discovery and transparency.
                </p>
