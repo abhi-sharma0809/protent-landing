@@ -551,9 +551,176 @@ const Logo = () => (
   </div>
 );
 
+/**
+ * Get Started form — submits to API which emails srihan@protent.ai
+ */
+const GetStartedForm = () => {
+  const [agency, setAgency] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('sending');
+    setErrorMessage('');
+    try {
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agency: agency.trim(),
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          message: message.trim().slice(0, 200) || undefined,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setErrorMessage((data.error || 'Submit failed') + (data.detail ? ` (${data.detail})` : ''));
+        setStatus('error');
+        return;
+      }
+      setStatus('success');
+      setAgency('');
+      setName('');
+      setEmail('');
+      setPhone('');
+      setMessage('');
+    } catch {
+      setErrorMessage('Network error. If running locally, ensure RESEND_API_KEY is in .env and restart the dev server.');
+      setStatus('error');
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-black text-white grid-bg flex flex-col">
+      <nav className="w-full px-6 py-4 flex justify-between items-center bg-black border-b border-white/10">
+        <a href="#" onClick={(e) => { e.preventDefault(); window.location.hash = ''; }} className="flex items-center gap-2.5">
+          <LogoMark />
+          <span className="text-2xl font-black tracking-wide uppercase text-white">protent</span>
+        </a>
+        <a href="#" onClick={(e) => { e.preventDefault(); window.location.hash = ''; }} className="border border-white/10 text-white px-6 py-2 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+          Back
+        </a>
+      </nav>
+      <main className="flex-1 flex items-center justify-center px-6 py-16">
+        <div className="w-full max-w-md">
+          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-white mb-2">
+            Get Started
+          </h1>
+          <p className="text-white/60 font-mono text-sm uppercase tracking-widest mb-8">
+            A founder will get back to you within 30 minutes.
+          </p>
+          {status === 'success' && (
+            <div className="mb-6 p-4 border border-emerald-500/50 bg-emerald-500/10 text-emerald-400 font-mono text-sm uppercase tracking-wide">
+              Message sent successfully. 
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="mb-6 p-4 border border-red-500/50 bg-red-500/10 text-red-400 font-mono text-sm uppercase tracking-wide">
+              {errorMessage || 'Something went wrong. Please email srihan@protent.ai directly.'}
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label htmlFor="agency" className="block text-[10px] font-mono text-white/50 uppercase tracking-widest mb-2">
+                Agency name
+              </label>
+              <input
+                id="agency"
+                type="text"
+                required
+                value={agency}
+                onChange={(e) => setAgency(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 font-mono text-sm uppercase tracking-wide placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                placeholder="Your agency or organization"
+              />
+            </div>
+            <div>
+              <label htmlFor="name" className="block text-[10px] font-mono text-white/50 uppercase tracking-widest mb-2">
+                Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 font-mono text-sm uppercase tracking-wide placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                placeholder="Your name"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-[10px] font-mono text-white/50 uppercase tracking-widest mb-2">
+                Work email
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 font-mono text-sm uppercase tracking-wide placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                placeholder="you@agency.gov"
+              />
+            </div>
+            <div>
+              <label htmlFor="phone" className="block text-[10px] font-mono text-white/50 uppercase tracking-widest mb-2">
+                Phone <span className="text-white/30 normal-case">(optional)</span>
+              </label>
+              <input
+                id="phone"
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 font-mono text-sm uppercase tracking-wide placeholder:text-white/30 focus:outline-none focus:border-white/30"
+                placeholder="+1 (555) 000-0000"
+              />
+            </div>
+            <div>
+              <label htmlFor="message" className="block text-[10px] font-mono text-white/50 uppercase tracking-widest mb-2">
+                Message <span className="text-white/30 normal-case">(optional, 200 characters)</span>
+              </label>
+              <textarea
+                id="message"
+                maxLength={200}
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                rows={3}
+                className="w-full bg-white/5 border border-white/10 text-white px-4 py-3 font-mono text-sm normal-case tracking-wide placeholder:text-white/30 focus:outline-none focus:border-white/30 resize-none"
+                placeholder="Anything you'd like to add…"
+              />
+              <p className="mt-1 text-right text-[10px] font-mono text-white/40">{message.length}/200</p>
+            </div>
+            <button
+              type="submit"
+              disabled={status === 'sending'}
+              className="w-full bg-white text-black py-4 font-black text-[11px] uppercase tracking-widest hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-white"
+            >
+              {status === 'sending' ? 'Sending…' : 'Submit'}
+            </button>
+          </form>
+        </div>
+      </main>
+    </div>
+  );
+};
+
 const App = () => {
   const dashboardSectionRef = useRef<HTMLElement>(null);
   const trackingSectionRef = useRef<HTMLElement>(null);
+  const [route, setRoute] = useState(() => (typeof window !== 'undefined' ? window.location.hash.slice(1) || '/' : '/'));
+
+  useEffect(() => {
+    const onHashChange = () => setRoute(window.location.hash.slice(1) || '/');
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -561,6 +728,10 @@ const App = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (route === '/form') {
+    return <GetStartedForm />;
+  }
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white/15 selection:text-white grid-bg">
@@ -572,7 +743,7 @@ const App = () => {
           <button onClick={() => scrollToSection('tracking')} className="hover:text-white transition-colors">Live Search</button>
           <button onClick={() => scrollToSection('compliance')} className="hover:text-white transition-colors">Compliance</button>
         </div>
-        <a href="mailto:srihan@protent.ai" className="border border-white/10 text-white px-6 py-2 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
+        <a href="#/form" className="border border-white/10 text-white px-6 py-2 text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-black transition-colors">
           Get Started
         </a>
       </nav>
@@ -596,7 +767,7 @@ const App = () => {
             Built for the next generation of industrial dominance.
           </p>
           <div className="flex flex-wrap gap-4">
-            <a href="mailto:srihan@protent.ai" className="bg-white text-black px-10 py-4 font-bold uppercase tracking-widest hover:bg-white/90 transition-colors border border-white">
+            <a href="#/form" className="bg-white text-black px-10 py-4 font-bold uppercase tracking-widest hover:bg-white/90 transition-colors border border-white">
               Initialize Deployment
             </a>
             <button type="button" onClick={() => scrollToSection('product')} className="bg-transparent text-white px-10 py-4 font-bold uppercase tracking-widest border border-white/20 hover:border-white transition-colors">
