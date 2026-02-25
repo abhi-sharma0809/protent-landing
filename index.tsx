@@ -531,17 +531,9 @@ const ProtentDashboard = ({ containerRef }: { containerRef: React.RefObject<HTML
   );
 };
 
-/* Logo: one half of interlocking mark – P-like loop + V-leg (inspired by ref) */
+/* Logo image from public/logo.png */
 const LogoMark = () => (
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7 shrink-0 text-white md:w-8 md:h-8" aria-hidden>
-    <path
-      d="M6 4v10M6 4h5l3 3v2l-3 3H6M6 14l-3 6"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="square"
-      strokeLinejoin="miter"
-    />
-  </svg>
+  <img src="/logo.png" alt="Protent" className="h-9 w-auto shrink-0 md:h-11" />
 );
 
 const Logo = () => (
@@ -768,7 +760,7 @@ const App = () => {
           </p>
           <div className="flex flex-wrap gap-4">
             <a href="#/form" className="bg-white text-black px-10 py-4 font-bold uppercase tracking-widest hover:bg-white/90 transition-colors border border-white">
-              Initialize Deployment
+              Request Demo
             </a>
             <button type="button" onClick={() => scrollToSection('product')} className="bg-transparent text-white px-10 py-4 font-bold uppercase tracking-widest border border-white/20 hover:border-white transition-colors">
               See Tactical Intelligence
