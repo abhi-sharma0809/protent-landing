@@ -1,34 +1,8 @@
-import * as React from 'react';
 import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.FROM_EMAIL || 'onboarding@resend.dev';
 const TO_EMAIL = ['srihan@protent.ai', 'abhi@protent.ai', 'hari@protent.ai'];
-
-function GetStartedEmailTemplate({
-  agency,
-  name,
-  email,
-  phone,
-  message,
-}: {
-  agency: string;
-  name: string;
-  email: string;
-  phone?: string;
-  message?: string;
-}) {
-  return React.createElement(
-    'div',
-    { style: { fontFamily: 'sans-serif', maxWidth: '600px' } },
-    React.createElement('h1', { style: { fontSize: '18px' } }, 'New Get Started form submission'),
-    React.createElement('p', null, React.createElement('strong', null, 'Agency: '), agency),
-    React.createElement('p', null, React.createElement('strong', null, 'Name: '), name),
-    React.createElement('p', null, React.createElement('strong', null, 'Work email: '), email),
-    phone ? React.createElement('p', null, React.createElement('strong', null, 'Phone: '), phone) : null,
-    message ? React.createElement('p', null, React.createElement('strong', null, 'Message: '), message) : null
-  );
-}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -41,6 +15,14 @@ export async function OPTIONS() {
 }
 
 export async function POST(request: Request) {
+  if (!process.env.RESEND_API_KEY) {
+    console.error('RESEND_API_KEY is not set');
+    return new Response(
+      JSON.stringify({ error: 'Server misconfiguration: RESEND_API_KEY is not set' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
   try {
     const body = await request.json() as { agency?: string; name?: string; email?: string; phone?: string; message?: string };
     const { agency, name, email, phone, message } = body;
@@ -53,19 +35,23 @@ export async function POST(request: Request) {
       );
     }
 
-    const reactElement = React.createElement(GetStartedEmailTemplate, {
-      agency: agency.trim(),
-      name: name.trim(),
-      email: email.trim(),
-      phone: phone?.trim() || undefined,
-      message: messageTrimmed || undefined,
-    });
+    const text = [
+      'New Get Started form submission',
+      '',
+      `Agency: ${agency.trim()}`,
+      `Name: ${name.trim()}`,
+      `Work email: ${email.trim()}`,
+      phone?.trim() ? `Phone: ${phone.trim()}` : null,
+      messageTrimmed ? `Message: ${messageTrimmed}` : null,
+    ]
+      .filter(Boolean)
+      .join('\n');
 
     const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: TO_EMAIL,
       subject: `Protent Get Started: ${name.trim()} (${agency.trim()})`,
-      react: reactElement,
+      text,
     });
 
     if (error) {
@@ -85,9 +71,13 @@ export async function POST(request: Request) {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e) {
-    console.error('Submit error:', e);
+    const err = e instanceof Error ? e : new Error(String(e));
+    console.error('Submit error:', err.message, err.stack);
     return new Response(
-      JSON.stringify({ error: 'Invalid request or server error' }),
+      JSON.stringify({
+        error: 'Invalid request or server error',
+        detail: process.env.NODE_ENV === 'development' ? err.message : undefined,
+      }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
