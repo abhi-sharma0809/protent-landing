@@ -591,6 +591,11 @@ const GetStartedForm = () => {
 
   return (
     <div className="min-h-screen bg-black text-white grid-bg flex flex-col">
+      {/* Backed by Y Combinator bar */}
+      <div className="flex items-center justify-center gap-2 bg-white border-b border-gray-200 py-2.5">
+        <img src="/yc.png" alt="Y Combinator" className="h-5 w-auto" />
+        <span className="text-sm font-medium text-gray-700">Backed by Y Combinator</span>
+      </div>
       <nav className="w-full px-6 py-4 flex justify-between items-center bg-black border-b border-white/10">
         <a href="#" onClick={(e) => { e.preventDefault(); window.location.hash = ''; }} className="flex items-center gap-2.5">
           <LogoMark />
@@ -727,7 +732,13 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-black text-white selection:bg-white/15 selection:text-white grid-bg">
-      <nav className="fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-black border-b border-white/10">
+      {/* Backed by Y Combinator bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center gap-2 bg-white border-b border-gray-200 py-2.5">
+        <img src="/yc.png" alt="Y Combinator" className="h-5 w-auto" />
+        <span className="text-sm font-medium text-gray-700">Backed by Y Combinator</span>
+      </div>
+
+      <nav className="fixed top-[40px] left-0 right-0 w-full z-50 px-6 py-4 flex justify-between items-center bg-black border-b border-white/10">
         <Logo />
         <div className="hidden md:flex gap-10 text-[11px] font-mono text-white/50 tracking-widest uppercase">
           <button onClick={() => scrollToSection('product')} className="hover:text-white transition-colors">Technology</button>
@@ -758,13 +769,25 @@ const App = () => {
             Protent provides autonomous strategic oversight for high-stakes environments.
             Built for the next generation of industrial dominance.
           </p>
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-4 items-center">
             <a href="#/form" className="bg-white text-black px-10 py-4 font-bold uppercase tracking-widest hover:bg-white/90 transition-colors border border-white">
               Request Demo
             </a>
             <button type="button" onClick={() => scrollToSection('product')} className="bg-transparent text-white px-10 py-4 font-bold uppercase tracking-widest border border-white/20 hover:border-white transition-colors">
               See Tactical Intelligence
             </button>
+            <a
+              href="https://www.ycombinator.com/launches/PYA-protent-real-time-video-intelligence-for-public-safety"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center"
+            >
+              <img
+                src="https://www.ycombinator.com/launches/PYA-protent-real-time-video-intelligence-for-public-safety/upvote_embed.svg"
+                alt="Launch YC: Protent: Real-time video intelligence for public safety"
+                className="h-15 w-auto opacity-90 hover:opacity-100 transition-opacity"
+              />
+            </a>
           </div>
         </div>
       </section>
