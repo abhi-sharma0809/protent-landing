@@ -16,14 +16,55 @@ const CALENDLY_DEMO =
   (import.meta.env.VITE_CALENDLY_DEMO_URL as string | undefined)?.trim() ||
   'https://calendly.com/srihan-protent/demo';
 
-const LogoMark = () => (
-  <img src="/logo.png" alt="" className="h-8 w-auto shrink-0 md:h-9" aria-hidden />
+/** Stroke in viewBox units (0–100). ~7 reads like typical defense-tech wordmarks (assertive, not hairline). */
+const LOGO_STROKE_USER_UNITS = 7;
+
+function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; stroke?: string }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="shrink-0"
+      aria-hidden
+    >
+      <path
+        d="M 35 30 A 20 20 0 0 0 35 70"
+        stroke={stroke}
+        strokeWidth={LOGO_STROKE_USER_UNITS}
+        strokeLinecap="square"
+        fill="none"
+      />
+      <path
+        d="M 65 30 A 20 20 0 0 1 65 70"
+        stroke={stroke}
+        strokeWidth={LOGO_STROKE_USER_UNITS}
+        strokeLinecap="square"
+        fill="none"
+      />
+      <line
+        x1="50"
+        y1="35"
+        x2="50"
+        y2="65"
+        stroke={stroke}
+        strokeWidth={LOGO_STROKE_USER_UNITS}
+        strokeLinecap="square"
+      />
+    </svg>
+  );
+}
+
+const LogoMark = ({ size = 32, stroke = 'currentColor' }: { size?: number; stroke?: string }) => (
+  <ProtentLogo size={size} stroke={stroke} />
 );
 
 const Logo = () => (
-  <div className="flex items-center gap-2.5">
-    <LogoMark />
-    <span className="text-lg font-semibold tracking-tight text-slate-900">Protent</span>
+  <div className="flex items-center gap-2.5 text-slate-900">
+    <LogoMark size={36} stroke="#0f172a" />
+    <span className="text-lg font-semibold tracking-tight">Protent</span>
   </div>
 );
 
@@ -34,29 +75,16 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#f6f7f9] text-slate-900">
-      {/* YC bar */}
-      <div className="sticky top-0 z-50 flex items-center justify-center gap-2 border-b border-slate-200/80 bg-white py-2.5">
-        <a
-          href="https://www.ycombinator.com/companies/protent"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 text-sm font-medium text-slate-600 transition hover:text-slate-900"
-        >
-          <img src="/yc.png" alt="" className="h-5 w-auto" />
-          <span>Backed by Y Combinator</span>
-        </a>
-      </div>
-
-      <header className="sticky top-[41px] z-40 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
+      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
         <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 md:px-8">
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 rounded-md outline-none ring-slate-900 focus-visible:ring-2"
+            className="flex items-center gap-2.5 rounded-md text-slate-900 outline-none ring-slate-900 focus-visible:ring-2"
             aria-label="Protent home"
           >
-            <LogoMark />
-            <span className="text-lg font-semibold tracking-tight text-slate-900">Protent</span>
+            <LogoMark size={32} stroke="#0f172a" />
+            <span className="text-lg font-semibold tracking-tight">Protent</span>
           </button>
           <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
             <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-slate-900">
@@ -243,13 +271,13 @@ const App = () => {
         {/* Comparison */}
         <section id="compare" className="scroll-mt-32 border-b border-slate-200/80 bg-slate-900 px-5 py-20 text-white md:px-8 md:py-24">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-center text-3xl font-semibold tracking-tight md:text-4xl">The old way vs. Protent</h2>
+            <h2 className="text-center text-3xl font-semibold tracking-tight md:text-4xl">Others vs. Protent</h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-300">
               Most tools weren’t built for simultaneous live feeds and operational tempo.
             </p>
             <div className="mt-14 grid gap-8 md:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-                <p className="text-sm font-medium uppercase tracking-wide text-slate-400">Typical approach</p>
+                <p className="text-sm font-medium uppercase tracking-wide text-slate-400">Others</p>
                 <ul className="mt-6 space-y-4 text-sm leading-relaxed text-slate-300">
                   <li>• Operators manually watch walls of screens or hunt through stored video after the fact.</li>
                   <li>• Keyword or metadata search misses the nuance of “person in red jacket near the exit.”</li>

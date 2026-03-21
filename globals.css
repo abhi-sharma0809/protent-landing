@@ -11,6 +11,7 @@
 @layer base {
   body {
     @apply bg-[#f6f7f9] text-slate-900 antialiased;
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
     font-feature-settings: "kern" 1, "liga" 1;
   }
 }
