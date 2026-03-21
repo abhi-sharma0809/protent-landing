@@ -21,7 +21,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1h-3_aWDxwtajt7X8CH900X
 
 ## Get Started form and email (Resend)
 
-The form sends **one email only** — to **srihan@protent.ai**, **abhi@protent.ai**, and **hari@protent.ai** — with the submitter’s agency, name, email, and phone. The person who filled out the form is never emailed.
+The form sends **one email only** to **srihan@protent.ai**, **abhi@protent.ai**, and **hari@protent.ai**, with the submitter’s agency, name, email, and phone. The person who filled out the form is never emailed.
 
 To send to those addresses (instead of only to the Resend account owner), you must:
 

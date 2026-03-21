@@ -3,84 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Protent</title>
+    <title>Protent: Real-time video intelligence for public safety</title>
+    <meta name="description" content="Protent analyzes live video for behavioral and situational signals, natural language search, and CJIS-ready security." />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Defense Industrial: Zero curvature globally */
-        *, *::before, *::after {
-            border-radius: 0 !important;
-        }
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #ffffff;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: #f6f7f9;
+            color: #0f172a;
             overflow-x: hidden;
         }
-        /* Grid-lines only. No gradients. */
-        .grid-bg {
-            background-image: linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
-            background-size: 50px 50px;
-        }
-        /* Crosshair corner motif for panels */
-        .crosshair-corners::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 12px;
-            height: 12px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            border-left: 1px solid rgba(255,255,255,0.2);
-            pointer-events: none;
-        }
-        .crosshair-corners::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 12px;
-            height: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            border-right: 1px solid rgba(255,255,255,0.2);
-            pointer-events: none;
-        }
         ::selection {
-            background: rgba(255,255,255,0.15);
-            color: #ffffff;
+            background: rgba(15, 23, 42, 0.12);
+            color: #0f172a;
         }
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #000000;
+            background: #f1f5f9;
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.15);
+            background: #cbd5e1;
+            border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.25);
-        }
-        @supports (-webkit-appearance: none) {
-            * {
-                -webkit-transform: translateZ(0);
-                transform: translateZ(0);
-            }
-            [data-framer-motion] {
-                will-change: transform;
-                -webkit-backface-visibility: hidden;
-                backface-visibility: hidden;
-            }
-        }
-        .motion-safe\:transform {
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            will-change: transform;
+            background: #94a3b8;
         }
     </style>
 <script type="importmap">
@@ -88,7 +41,6 @@
   "imports": {
     "lucide-react": "https://esm.sh/lucide-react@^0.475.0",
     "react-dom/": "https://esm.sh/react-dom@^19.0.0/",
-    "framer-motion": "https://esm.sh/framer-motion@^12.0.0",
     "react/": "https://esm.sh/react@^19.0.0/",
     "react": "https://esm.sh/react@^19.0.0"
   }
