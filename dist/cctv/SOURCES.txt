@@ -1,0 +1,20 @@
+The site hero now uses a built-in SVG graphic (multi-feed grid + intelligence hub) by default.
+Optional: set VITE_HERO_VIDEO_URL in .env to a single full-bleed MP4.
+
+Previously used Pixabay stock loops (download again if you want local files):
+
+  https://cdn.pixabay.com/video/2015/08/10/198-135846853_small.mp4   (ID 198)
+  https://cdn.pixabay.com/video/2015/08/10/280-135879343_small.mp4   (ID 280)
+  https://cdn.pixabay.com/video/2016/07/27/4037-176748881_small.mp4 (ID 4037)
+  https://cdn.pixabay.com/video/2018/01/30/14025-254146871_small.mp4 (ID 14025)
+  https://cdn.pixabay.com/video/2022/02/15/107773-678526591_small.mp4 (ID 107773)
+  https://cdn.pixabay.com/video/2016/09/21/5598-185024745_small.mp4  (ID 5598)
+  https://cdn.pixabay.com/video/2017/05/07/9010-216403624_small.mp4  (ID 9010)
+  https://cdn.pixabay.com/video/2017/03/03/8105-207208961_small.mp4  (ID 8105)
+  https://cdn.pixabay.com/video/2021/01/31/63680-507811716_small.mp4  (ID 63680)
+  https://cdn.pixabay.com/video/2020/05/24/39990-424360898_small.mp4  (ID 39990)
+  https://cdn.pixabay.com/video/2016/07/06/3722-173719865_small.mp4   (ID 3722)
+  https://cdn.pixabay.com/video/2023/07/24/173103-848555583_small.mp4 (ID 173103)
+
+License: https://pixabay.com/service/terms/
+Browse: https://pixabay.com/videos/search/cctv%20camera/

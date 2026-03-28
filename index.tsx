@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   Target,
@@ -11,13 +11,195 @@ import {
 } from 'lucide-react';
 import './globals.css';
 
-/** Override with `VITE_CALENDLY_DEMO_URL` in `.env` if needed */
 const CALENDLY_DEMO =
   (import.meta.env.VITE_CALENDLY_DEMO_URL as string | undefined)?.trim() ||
   'https://calendly.com/srihan-protent/demo';
 
-/** Stroke in viewBox units (0–100). ~7 reads like typical defense-tech wordmarks (assertive, not hairline). */
+const INK = '#071422';
+
+/** Optional full-bleed MP4; otherwise the hero uses the built-in Protent graphic. */
+const HERO_FULL_BLEED_URL = (import.meta.env.VITE_HERO_VIDEO_URL as string | undefined)?.trim() || '';
+
 const LOGO_STROKE_USER_UNITS = 7;
+
+const HERO_GRID = (() => {
+  const gw = 268;
+  const gh = 228;
+  const gx0 = 52;
+  const gy0 = 96;
+  const gap = 10;
+  const cells: { x: number; y: number }[] = [];
+  for (let r = 0; r < 3; r += 1) {
+    for (let c = 0; c < 4; c += 1) {
+      cells.push({ x: gx0 + c * (gw + gap), y: gy0 + r * (gh + gap) });
+    }
+  }
+  return { gw, gh, cells, hub: { x: 1288, y: 448 } };
+})();
+
+/** Abstract multi-feed + intelligence hub (matches brand: many live inputs, one operational picture). */
+function ProtentHeroGraphic() {
+  const { gw, gh, cells, hub } = HERO_GRID;
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 motion-reduce:hidden" aria-hidden>
+      <svg
+        className="h-full w-full"
+        viewBox="0 0 1600 900"
+        preserveAspectRatio="xMidYMid slice"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <defs>
+          <linearGradient id="phg-sky" x1="0" y1="0" x2="0.85" y2="1">
+            <stop offset="0%" stopColor="#030a12" />
+            <stop offset="55%" stopColor="#071422" />
+            <stop offset="100%" stopColor="#0c1f33" />
+          </linearGradient>
+          <linearGradient id="phg-tile" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="rgba(140, 185, 220, 0.14)" />
+            <stop offset="45%" stopColor="rgba(255, 255, 255, 0.035)" />
+            <stop offset="100%" stopColor="rgba(11, 92, 171, 0.1)" />
+          </linearGradient>
+          <linearGradient id="phg-hub" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="rgba(11, 92, 171, 0.45)" />
+            <stop offset="100%" stopColor="rgba(11, 92, 171, 0.08)" />
+          </linearGradient>
+        </defs>
+        <rect width="1600" height="900" fill="url(#phg-sky)" />
+        <g opacity={0.9}>
+          {cells.map((cell, i) => (
+            <g key={i}>
+              <rect
+                x={cell.x}
+                y={cell.y}
+                width={gw}
+                height={gh}
+                rx={2}
+                fill="url(#phg-tile)"
+                stroke="rgba(255,255,255,0.09)"
+                strokeWidth={1}
+              />
+              <rect
+                x={cell.x + 12}
+                y={cell.y + gh - 28}
+                width={gw - 24}
+                height={4}
+                fill="rgba(11,92,171,0.35)"
+                rx={1}
+              />
+            </g>
+          ))}
+        </g>
+        {cells.map((cell, i) => {
+          const cx = cell.x + gw / 2;
+          const cy = cell.y + gh / 2;
+          return (
+            <line
+              key={`ln-${i}`}
+              x1={cx}
+              y1={cy}
+              x2={hub.x}
+              y2={hub.y}
+              stroke="rgba(11, 92, 171, 0.14)"
+              strokeWidth={1}
+            />
+          );
+        })}
+        <g transform={`translate(${hub.x}, ${hub.y})`}>
+          <circle r={138} fill="url(#phg-hub)" opacity={0.25} />
+          <circle r={118} stroke="rgba(11,92,171,0.5)" strokeWidth={1.5} fill="none" />
+          <circle r={98} stroke="rgba(255,255,255,0.12)" strokeWidth={1} fill="none" />
+          <path
+            d="M -32 -48 A 38 38 0 0 0 -32 48"
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth={5}
+            strokeLinecap="square"
+            fill="none"
+          />
+          <path
+            d="M 32 -48 A 38 38 0 0 1 32 48"
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth={5}
+            strokeLinecap="square"
+            fill="none"
+          />
+          <line
+            x1={0}
+            y1={-38}
+            x2={0}
+            y2={38}
+            stroke="rgba(255,255,255,0.22)"
+            strokeWidth={5}
+            strokeLinecap="square"
+          />
+        </g>
+      </svg>
+      <HeroBackdropOverlays />
+    </div>
+  );
+}
+
+function HeroBackdropOverlays() {
+  return (
+    <>
+      <div className="hero-intel-overlay motion-reduce:hidden" aria-hidden />
+      <div className="absolute inset-0 hidden bg-[#071422] motion-reduce:block" aria-hidden />
+      <div
+        className="absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/92 to-[#071422]/50 motion-reduce:hidden"
+        aria-hidden
+      />
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-[#071422]/92 via-transparent to-[#071422]/45 motion-reduce:hidden"
+        aria-hidden
+      />
+    </>
+  );
+}
+
+function HeroSingleVideoBackdrop({ src }: { src: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const v = ref.current;
+    if (!v) return;
+    const tryPlay = () => {
+      v.play().catch(() => {});
+    };
+    tryPlay();
+    v.addEventListener('canplay', tryPlay);
+    return () => v.removeEventListener('canplay', tryPlay);
+  }, [src]);
+
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0">
+      <video
+        ref={ref}
+        className="hero-video absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
+        src={src}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden
+      />
+      <HeroBackdropOverlays />
+    </div>
+  );
+}
+
+function HeroBackdrop() {
+  if (HERO_FULL_BLEED_URL) {
+    return <HeroSingleVideoBackdrop src={HERO_FULL_BLEED_URL} />;
+  }
+  return (
+    <>
+      <ProtentHeroGraphic />
+      <div className="pointer-events-none absolute inset-0 z-0 hidden motion-reduce:block">
+        <div className="absolute inset-0 bg-[#071422]" aria-hidden />
+      </div>
+    </>
+  );
+}
 
 function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; stroke?: string }) {
   return (
@@ -57,14 +239,14 @@ function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; s
   );
 }
 
-const LogoMark = ({ size = 32, stroke = 'currentColor' }: { size?: number; stroke?: string }) => (
+const LogoMark = ({ size = 32, stroke = INK }: { size?: number; stroke?: string }) => (
   <ProtentLogo size={size} stroke={stroke} />
 );
 
 const Logo = () => (
-  <div className="flex items-center gap-2.5 text-slate-900">
-    <LogoMark size={36} stroke="#0f172a" />
-    <span className="text-lg font-semibold tracking-tight">Protent</span>
+  <div className="flex items-center gap-2.5" style={{ color: INK }}>
+    <LogoMark size={36} stroke={INK} />
+    <span className="text-[17px] font-semibold tracking-tight">Protent</span>
   </div>
 );
 
@@ -74,29 +256,29 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f7f9] text-slate-900">
-      <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-md">
-        <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3.5 md:px-8">
+    <div className="min-h-screen bg-white text-[#071422]">
+      <header className="sticky top-0 z-50 border-b border-[#d7dde3] bg-white">
+        <nav className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-5 py-4 md:px-10">
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 rounded-md text-slate-900 outline-none ring-slate-900 focus-visible:ring-2"
+            className="flex items-center gap-2.5 rounded-sm outline-none ring-[#0b5cab] focus-visible:ring-2 focus-visible:ring-offset-2"
             aria-label="Protent home"
           >
-            <LogoMark size={32} stroke="#0f172a" />
-            <span className="text-lg font-semibold tracking-tight">Protent</span>
+            <LogoMark size={30} stroke={INK} />
+            <span className="text-[17px] font-semibold tracking-tight text-[#071422]">Protent</span>
           </button>
-          <div className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
-            <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-slate-900">
-              Product
+          <div className="hidden items-center gap-10 text-[15px] font-medium text-[#3d4d5c] md:flex">
+            <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-[#071422]">
+              Platform
             </button>
-            <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-slate-900">
-              How it works
+            <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-[#071422]">
+              Deployment
             </button>
-            <button type="button" onClick={() => scrollToSection('compare')} className="transition hover:text-slate-900">
-              Why Protent
+            <button type="button" onClick={() => scrollToSection('compare')} className="transition hover:text-[#071422]">
+              Differentiation
             </button>
-            <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-slate-900">
+            <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-[#071422]">
               Security
             </button>
           </div>
@@ -104,7 +286,7 @@ const App = () => {
             href={CALENDLY_DEMO}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+            className="inline-flex shrink-0 items-center gap-2 bg-[#071422] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#0c2438]"
           >
             Book a Demo
             <ArrowRight className="h-4 w-4" aria-hidden />
@@ -113,110 +295,126 @@ const App = () => {
       </header>
 
       <main>
-        {/* Hero */}
-        <section className="border-b border-slate-200/80 bg-white px-5 py-20 md:px-8 md:py-28">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="mb-4 text-sm font-medium text-slate-500">Real-time video intelligence for public safety</p>
-            <h1 className="text-balance text-4xl font-semibold leading-[1.15] tracking-tight text-slate-900 md:text-5xl lg:text-[3.25rem]">
-              Stop drowning in live feeds.
-              <span className="mt-2 block text-slate-500">Start acting on what matters.</span>
-            </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-              Protent reads live video for behavioral cues and situational signals first, then lets you search in plain
-              language, all on CJIS-ready infrastructure.
-            </p>
-            <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row sm:gap-4">
-              <a
-                href={CALENDLY_DEMO}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 sm:w-auto"
-              >
-                Book a Demo
-                <ArrowRight className="h-4 w-4" />
-              </a>
-              <button
-                type="button"
-                onClick={() => scrollToSection('product')}
-                className="w-full rounded-lg border border-slate-300 bg-white px-8 py-3.5 text-sm font-semibold text-slate-800 transition hover:border-slate-400 hover:bg-slate-50 sm:w-auto"
-              >
-                See what we do
-              </button>
+        <section className="relative min-h-[78vh] overflow-hidden border-b border-[#d7dde3]">
+          <HeroBackdrop />
+          <div className="relative z-10 px-5 py-20 md:px-10 md:py-28 lg:min-h-[78vh] lg:py-32">
+            <div className="mx-auto flex max-w-[1200px] flex-col justify-center lg:min-h-[calc(78vh-8rem)] lg:grid lg:grid-cols-12 lg:gap-14 lg:items-center">
+              <div className="lg:col-span-7">
+                <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/65">Live video intelligence</p>
+                <h1 className="pt-h1 text-[2rem] leading-[1.18] text-white md:text-[2.5rem] lg:text-[2.75rem]">
+                  Situational awareness from every feed you operate.
+                </h1>
+                <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/80">
+                  Protent is built for agencies that run live video at scale: behavioral and situational signals surface first,
+                  natural language search runs on live streams only, and the stack is designed for CJIS-aligned environments.
+                </p>
+                <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
+                  <a
+                    href={CALENDLY_DEMO}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] transition hover:bg-white/95 sm:w-auto"
+                  >
+                    Book a Demo
+                    <ArrowRight className="h-4 w-4" />
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection('product')}
+                    className="w-full border border-white/35 bg-white/5 px-8 py-3.5 text-[14px] font-semibold text-white backdrop-blur-[2px] transition hover:border-white/55 hover:bg-white/10 sm:w-auto"
+                  >
+                    View platform
+                  </button>
+                </div>
+              </div>
+              <aside className="mt-14 border border-white/20 bg-black/35 p-8 backdrop-blur-md lg:col-span-5 lg:mt-0">
+                <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">At a glance</p>
+                <ul className="space-y-5 text-[15px] leading-snug text-white/75">
+                  <li className="border-l-2 border-[#5eb0e8] pl-4">
+                    <span className="block font-semibold text-white">Live-only processing</span>
+                    <span className="mt-1 block">Search and analysis on active streams, not a retrospective archive.</span>
+                  </li>
+                  <li className="border-l-2 border-white/25 pl-4">
+                    <span className="block font-semibold text-white">Supervisor-first</span>
+                    <span className="mt-1 block">Signals and language models tuned for operational tempo, not consumer demos.</span>
+                  </li>
+                  <li className="border-l-2 border-white/25 pl-4">
+                    <span className="block font-semibold text-white">Security by design</span>
+                    <span className="mt-1 block">Encryption, access control, and audit trails aligned to public safety requirements.</span>
+                  </li>
+                </ul>
+              </aside>
             </div>
           </div>
         </section>
 
-        {/* Product pillars */}
-        <section id="product" className="scroll-mt-32 border-b border-slate-200/80 px-5 py-20 md:px-8 md:py-24">
-          <div className="mx-auto max-w-6xl">
-            <div className="mx-auto mb-14 max-w-2xl text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">Built for live operations</h2>
-              <p className="mt-4 text-lg text-slate-600">
-                Three capabilities agencies need when every second counts, without the noise of archived footage or manual
-                monitoring.
+        <section id="product" className="scroll-mt-24 border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px]">
+            <div className="max-w-2xl">
+              <p className="pt-eyebrow mb-4">Platform</p>
+              <h2 className="pt-h2 text-2xl md:text-3xl">Capabilities for real-time operations</h2>
+              <p className="mt-4 text-[17px] leading-relaxed text-[#3d4d5c]">
+                Three integrated functions agencies use together during live deployments.
               </p>
             </div>
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="mt-12 grid gap-px bg-[#d7dde3] md:grid-cols-3">
               {[
                 {
-                  icon: <Activity className="h-6 w-6 text-slate-700" strokeWidth={1.5} />,
-                  title: 'Behavioral analysis & situational signals',
-                  desc: 'Surface escalation risk from acoustic and verbal patterns and broader situational context, informed by published NLP research.',
+                  icon: <Activity className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
+                  title: 'Behavioral & situational analysis',
+                  desc: 'Acoustic and verbal patterns plus scene context to flag escalation risk early, grounded in published NLP research.',
                 },
                 {
-                  icon: <MessageSquare className="h-6 w-6 text-slate-700" strokeWidth={1.5} />,
+                  icon: <MessageSquare className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
                   title: 'Natural language search',
-                  desc: 'Find people and situations across active streams using plain-language descriptions, with no indexing of historical video.',
+                  desc: 'Describe subjects or situations in plain language across active feeds. No indexing of historical footage.',
                 },
                 {
-                  icon: <Target className="h-6 w-6 text-slate-700" strokeWidth={1.5} />,
+                  icon: <Target className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
                   title: 'Precision detection',
-                  desc: 'Identify weapons, vehicles, and evidence in real time with enterprise-grade computer vision.',
+                  desc: 'Weapons, vehicles, and evidence-class objects in real time using enterprise computer vision.',
                 },
               ].map((item) => (
-                <article
-                  key={item.title}
-                  className="rounded-2xl border border-slate-200/90 bg-white p-8 shadow-sm transition hover:border-slate-300 hover:shadow-md"
-                >
-                  <div className="mb-5 flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100">{item.icon}</div>
-                  <h3 className="text-lg font-semibold text-slate-900">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                <article key={item.title} className="bg-white p-8 md:p-10">
+                  <div className="mb-6">{item.icon}</div>
+                  <h3 className="text-lg font-semibold text-[#071422]">{item.title}</h3>
+                  <p className="mt-3 text-[15px] leading-relaxed text-[#3d4d5c]">{item.desc}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
 
-        {/* How it works */}
-        <section id="how" className="scroll-mt-32 border-b border-slate-200/80 bg-white px-5 py-20 md:px-8 md:py-24">
-          <div className="mx-auto max-w-3xl">
-            <h2 className="text-center text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">How it works</h2>
-            <p className="mx-auto mt-4 max-w-xl text-center text-lg text-slate-600">
-              From deployment to live insight, designed to fit how your teams already work.
+        <section id="how" className="scroll-mt-24 border-b border-[#d7dde3] bg-white px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[800px]">
+            <p className="pt-eyebrow mb-4 text-center">Deployment</p>
+            <h2 className="pt-h2 text-center text-2xl md:text-3xl">How agencies bring Protent online</h2>
+            <p className="mx-auto mt-4 max-w-xl text-center text-[17px] text-[#3d4d5c]">
+              From integration to live use, structured around how command staff and video units already work.
             </p>
-            <ol className="mt-14 space-y-12">
+            <ol className="mt-14 space-y-0 divide-y divide-[#d7dde3] border-y border-[#d7dde3]">
               {[
                 {
                   step: '01',
-                  title: 'We connect to your live video',
-                  body: 'Field and fixed cameras tie into Protent in real time, with sub-millisecond latency where it matters for alerting.',
+                  title: 'Connect live video infrastructure',
+                  body: 'Field and fixed cameras integrate with Protent for real-time processing and alerting where latency matters.',
                 },
                 {
                   step: '02',
-                  title: 'Behavioral and situational signals come first',
-                  body: 'The system continuously interprets verbal, acoustic, and scene context so supervisors see escalation and risk patterns before they spiral.',
+                  title: 'Operationalize signals',
+                  body: 'Verbal, acoustic, and situational models run continuously so supervisors see patterns before they require a manual review of every tile.',
                 },
                 {
                   step: '03',
-                  title: 'Natural language search ties it together',
-                  body: 'Describe who or what you need; queries run on live video only, with detection and re-identification across nodes when a match matters.',
+                  title: 'Search and correlate on demand',
+                  body: 'Natural language queries execute against live video only, with detection and re-identification across nodes when a match is operationally relevant.',
                 },
               ].map((block) => (
-                <li key={block.step} className="flex gap-6 md:gap-10">
-                  <span className="font-mono text-sm font-semibold tabular-nums text-slate-400">{block.step}</span>
+                <li key={block.step} className="flex flex-col gap-4 py-8 sm:flex-row sm:gap-10">
+                  <span className="w-10 shrink-0 text-sm font-semibold tabular-nums text-[#0b5cab]">{block.step}</span>
                   <div>
-                    <h3 className="text-xl font-semibold text-slate-900">{block.title}</h3>
-                    <p className="mt-2 leading-relaxed text-slate-600">{block.body}</p>
+                    <h3 className="text-lg font-semibold text-[#071422]">{block.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-[#3d4d5c]">{block.body}</p>
                   </div>
                 </li>
               ))}
@@ -224,43 +422,41 @@ const App = () => {
           </div>
         </section>
 
-        {/* Signals + search */}
-        <section className="border-b border-slate-200/80 px-5 py-20 md:px-8 md:py-24">
-          <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:items-start">
-            <div>
-              <p className="text-sm font-medium text-slate-500">Live operations</p>
-              <h2 className="mt-2 text-3xl font-semibold tracking-tight text-slate-900 md:text-4xl">
-                Situational signals first, search when you need it
-              </h2>
-              <p className="mt-4 text-lg text-slate-600">
-                Protent doesn’t replace your VMS. It adds an intelligence layer that prioritizes behavioral and situational
-                context, then supports natural language search across the same live feeds.
+        <section className="border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px] lg:grid lg:grid-cols-12 lg:gap-16">
+            <div className="lg:col-span-5">
+              <p className="pt-eyebrow mb-4">Operations</p>
+              <h2 className="pt-h2 text-2xl md:text-3xl">Works with your existing VMS</h2>
+              <p className="mt-4 text-[17px] leading-relaxed text-[#3d4d5c]">
+                Protent is an intelligence layer: it does not replace your video management system. It prioritizes behavioral
+                and situational context on the same feeds your floor already watches, then adds natural language search when
+                teams need to narrow the picture.
               </p>
             </div>
-            <ul className="space-y-5">
+            <ul className="mt-10 space-y-0 divide-y divide-[#d7dde3] border border-[#d7dde3] bg-white lg:col-span-7 lg:mt-0">
               {[
                 {
                   title: 'Behavioral & situational analysis',
-                  desc: 'Ongoing interpretation of language, tone, and scene dynamics so teams catch escalation early.',
+                  desc: 'Language, tone, and scene dynamics interpreted on a continuous basis.',
                 },
                 {
-                  title: 'Low-latency streaming analysis',
-                  desc: 'Processing tuned for live video so signals and alerts land while they still matter.',
+                  title: 'Streaming analysis latency',
+                  desc: 'Processing tuned so supervisors receive signals while events are still unfolding.',
                 },
                 {
                   title: 'Natural language queries',
-                  desc: 'Describe who or what you’re looking for; the engine monitors every active feed for a match.',
+                  desc: 'Describe what you need; the system evaluates every active feed for a match.',
                 },
                 {
-                  title: 'Re-identification across cameras',
-                  desc: 'Keep visibility as subjects move between live nodes on the deployment.',
+                  title: 'Re-identification across nodes',
+                  desc: 'Track continuity as subjects move between cameras on the deployment.',
                 },
               ].map((row) => (
-                <li key={row.title} className="flex gap-4 rounded-xl border border-slate-200/90 bg-white p-5 shadow-sm">
-                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" strokeWidth={1.75} />
+                <li key={row.title} className="flex gap-4 px-6 py-5">
+                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#0b5cab]" strokeWidth={1.75} />
                   <div>
-                    <p className="font-semibold text-slate-900">{row.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-slate-600">{row.desc}</p>
+                    <p className="font-semibold text-[#071422]">{row.title}</p>
+                    <p className="mt-1 text-[14px] leading-relaxed text-[#3d4d5c]">{row.desc}</p>
                   </div>
                 </li>
               ))}
@@ -268,63 +464,61 @@ const App = () => {
           </div>
         </section>
 
-        {/* Comparison */}
-        <section id="compare" className="scroll-mt-32 border-b border-slate-200/80 bg-slate-900 px-5 py-20 text-white md:px-8 md:py-24">
-          <div className="mx-auto max-w-6xl">
-            <h2 className="text-center text-3xl font-semibold tracking-tight md:text-4xl">Others vs. Protent</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-lg text-slate-300">
-              Most tools weren’t built for simultaneous live feeds and operational tempo.
+        <section id="compare" className="scroll-mt-24 border-b border-[#d7dde3] bg-white px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px]">
+            <p className="pt-eyebrow mb-4 text-center">Differentiation</p>
+            <h2 className="pt-h2 text-center text-2xl md:text-3xl">Built for simultaneous live feeds</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-center text-[17px] text-[#3d4d5c]">
+              Most general-purpose tools assume stored media or low camera counts. Protent assumes continuous live video and
+              command-staff workload.
             </p>
-            <div className="mt-14 grid gap-8 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/5 p-8">
-                <p className="text-sm font-medium uppercase tracking-wide text-slate-400">Others</p>
-                <ul className="mt-6 space-y-4 text-sm leading-relaxed text-slate-300">
-                  <li>• Operators manually watch walls of screens or hunt through stored video after the fact.</li>
-                  <li>• Keyword or metadata search misses the nuance of “person in red jacket near the exit.”</li>
-                  <li>• Siloed feeds make it hard to follow someone across cameras in real time.</li>
+            <div className="mt-12 grid gap-6 md:grid-cols-2">
+              <div className="border border-[#d7dde3] bg-[#f0f3f6] p-8 md:p-10">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5a6b7a]">Typical limitations</p>
+                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-[#3d4d5c]">
+                  <li>Manual monitoring of large wall layouts, or post-incident review of stored video.</li>
+                  <li>Keyword and metadata search that misses natural descriptions of people, clothing, and context.</li>
+                  <li>Fragmented views that make it difficult to follow movement across cameras in real time.</li>
                 </ul>
               </div>
-              <div className="rounded-2xl border border-white/15 bg-white/10 p-8">
-                <p className="text-sm font-medium uppercase tracking-wide text-emerald-400/90">With Protent</p>
-                <ul className="mt-6 space-y-4 text-sm leading-relaxed text-slate-100">
-                  <li>• Behavioral and situational signals surface continuously so supervisors aren’t guessing from raw tiles alone.</li>
-                  <li>• Natural language search runs on live streams only, with no retrospective indexing required.</li>
-                  <li>• Built for agencies that need CJIS-aligned handling of sensitive data.</li>
+              <div className="border border-[#071422] bg-[#071422] p-8 text-white md:p-10">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">With Protent</p>
+                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/90">
+                  <li>Continuous behavioral and situational signals so supervisors are not inferring risk from raw tiles alone.</li>
+                  <li>Natural language search over live streams only, without building a searchable historical archive.</li>
+                  <li>Architecture and controls oriented toward CJIS-aligned handling of sensitive law enforcement data.</li>
                 </ul>
               </div>
             </div>
           </div>
         </section>
 
-        {/* Security */}
-        <section id="security" className="scroll-mt-32 px-5 py-20 md:px-8 md:py-24">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid gap-12 rounded-2xl border border-slate-200/90 bg-white p-10 shadow-sm md:grid-cols-2 md:p-12">
-              <div>
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
-                  <Lock className="h-6 w-6 text-slate-700" strokeWidth={1.5} />
-                </div>
-                <h2 className="text-3xl font-semibold tracking-tight text-slate-900">CJIS-ready by design</h2>
-                <p className="mt-4 leading-relaxed text-slate-600">
-                  Security is part of the architecture, not an afterthought. Encryption, access controls, and auditability for
-                  the standards public safety teams expect.
+        <section id="security" className="scroll-mt-24 border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px]">
+            <div className="grid gap-0 border border-[#d7dde3] bg-white md:grid-cols-2">
+              <div className="border-b border-[#d7dde3] p-10 md:border-b-0 md:border-r md:p-12">
+                <Lock className="h-6 w-6 text-[#0b5cab]" strokeWidth={1.75} />
+                <h2 className="pt-h2 mt-6 text-2xl md:text-3xl">CJIS-aligned security</h2>
+                <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
+                  Encryption, access control, and auditability are part of the product architecture, not a separate compliance
+                  project. Protent is designed for the standards public safety organizations expect when video and intelligence
+                  data are in scope.
                 </p>
               </div>
-              <div className="flex flex-col justify-center border-t border-slate-200 pt-10 md:border-l md:border-t-0 md:pl-12 md:pt-0">
-                <div className="flex gap-4 rounded-xl bg-slate-50 p-5">
-                  <CheckCircle className="h-6 w-6 shrink-0 text-emerald-600" strokeWidth={1.75} />
-                  <p className="text-sm leading-relaxed text-slate-700">
-                    We focus on the security stack so your team can focus on the field, without compromising compliance or
-                    chain-of-custody expectations.
+              <div className="flex flex-col justify-center p-10 md:p-12">
+                <div className="border-l-2 border-[#0b5cab] bg-[#f0f3f6] pl-5 pr-4 py-4">
+                  <p className="text-[15px] leading-relaxed text-[#3d4d5c]">
+                    Our team focuses on the security and custody model so yours can focus on field operations and command
+                    decisions, without trading off chain-of-custody or policy requirements.
                   </p>
                 </div>
                 <a
                   href={CALENDLY_DEMO}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-8 inline-flex w-fit items-center gap-2 text-sm font-semibold text-slate-900 underline decoration-slate-300 underline-offset-4 transition hover:decoration-slate-900"
+                  className="mt-8 inline-flex w-fit items-center gap-2 text-[14px] font-semibold text-[#0b5cab] underline decoration-[#b8c9d9] underline-offset-4 transition hover:decoration-[#0b5cab]"
                 >
-                  Talk to us about your environment
+                  Schedule a security discussion
                   <ArrowRight className="h-4 w-4" />
                 </a>
               </div>
@@ -332,18 +526,18 @@ const App = () => {
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="border-t border-slate-200/80 bg-white px-5 py-16 md:px-8 md:py-20">
-          <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">See Protent on your feeds</h2>
-            <p className="mt-3 text-slate-600">
-              Book a short call. We’ll walk through situational signals, natural language search, and deployment options.
+        <section className="border-b border-[#d7dde3] bg-white px-5 py-14 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[640px] text-center">
+            <h2 className="pt-h2 text-xl md:text-2xl">Schedule a briefing</h2>
+            <p className="mt-3 text-[16px] text-[#3d4d5c]">
+              We will walk through your video environment, signal requirements, and deployment path with your technical and
+              command stakeholders.
             </p>
             <a
               href={CALENDLY_DEMO}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-lg bg-slate-900 px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+              className="mt-8 inline-flex items-center gap-2 bg-[#071422] px-8 py-3.5 text-[14px] font-semibold text-white transition hover:bg-[#0c2438]"
             >
               Book a Demo
               <ArrowRight className="h-4 w-4" />
@@ -352,62 +546,63 @@ const App = () => {
         </section>
       </main>
 
-      <footer className="border-t border-slate-200/80 bg-[#f6f7f9] px-5 py-14 md:px-8">
-        <div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-4">
+      <footer className="bg-[#071422] px-5 py-14 text-white md:px-10">
+        <div className="mx-auto grid max-w-[1200px] gap-12 md:grid-cols-4">
           <div className="md:col-span-2">
-            <Logo />
-            <p className="mt-4 max-w-sm text-sm leading-relaxed text-slate-600">
-              The intelligence layer that watches alongside your operators, built for public safety and backed by Y Combinator.
+            <div className="flex items-center gap-2.5">
+              <LogoMark size={32} stroke="#ffffff" />
+              <span className="text-[17px] font-semibold tracking-tight">Protent</span>
+            </div>
+            <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/65">
+              Live video intelligence for public safety agencies. Behavioral and situational signals, natural language search,
+              and security controls built for regulated environments.
             </p>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Product</p>
-            <ul className="mt-4 space-y-3 text-sm text-slate-600">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Platform</p>
+            <ul className="mt-4 space-y-3 text-[14px] text-white/70">
               <li>
-                <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-slate-900">
+                <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-white">
                   Capabilities
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-slate-900">
-                  How it works
+                <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-white">
+                  Deployment
                 </button>
               </li>
               <li>
-                <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-slate-900">
+                <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-white">
                   Security
                 </button>
               </li>
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Connect</p>
-            <ul className="mt-4 space-y-3 text-sm text-slate-600">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Company</p>
+            <ul className="mt-4 space-y-3 text-[14px] text-white/70">
               <li>
                 <a
                   href="https://www.linkedin.com/company/protentai/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 transition hover:text-slate-900"
+                  className="inline-flex items-center gap-2 transition hover:text-white"
                 >
                   <Linkedin className="h-4 w-4" />
                   LinkedIn
                 </a>
               </li>
               <li>
-                <a
-                  href={CALENDLY_DEMO}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-slate-900"
-                >
+                <a href={CALENDLY_DEMO} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
                   Book a Demo
                 </a>
               </li>
             </ul>
           </div>
         </div>
-        <p className="mx-auto mt-12 max-w-6xl text-center text-xs text-slate-400">© {new Date().getFullYear()} Protent. All rights reserved.</p>
+        <p className="mx-auto mt-14 max-w-[1200px] border-t border-white/10 pt-8 text-center text-[12px] text-white/45">
+          © {new Date().getFullYear()} Protent. All rights reserved.
+        </p>
       </footer>
     </div>
   );
