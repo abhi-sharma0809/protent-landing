@@ -219,8 +219,8 @@ const App = () => {
                   Situational awareness from every feed you operate.
                 </h1>
                 <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/80">
-                  Protent is built for agencies that run live video at scale: behavioral and situational signals surface first,
-                  natural language search runs on live streams only, and the stack is designed for CJIS-aligned environments.
+                  Behavioral and situational analysis on live feeds. Natural language search over active streams. Architecture
+                  and controls for CJIS-aligned deployments.
                 </p>
                 <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
                   <a
@@ -245,16 +245,16 @@ const App = () => {
                 <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">At a glance</p>
                 <ul className="space-y-5 text-[15px] leading-snug text-white/75">
                   <li className="border-l-2 border-[#5eb0e8] pl-4">
-                    <span className="block font-semibold text-white">Live-only processing</span>
-                    <span className="mt-1 block">Search and analysis on active streams, not a retrospective archive.</span>
+                    <span className="block font-semibold text-white">Live streams only</span>
+                    <span className="mt-1 block">Search and analysis run on active feeds.</span>
                   </li>
                   <li className="border-l-2 border-white/25 pl-4">
-                    <span className="block font-semibold text-white">Supervisor-first</span>
-                    <span className="mt-1 block">Signals and language models tuned for operational tempo, not consumer demos.</span>
+                    <span className="block font-semibold text-white">Continuous models</span>
+                    <span className="mt-1 block">Verbal, acoustic, and situational models on live video.</span>
                   </li>
                   <li className="border-l-2 border-white/25 pl-4">
-                    <span className="block font-semibold text-white">Security by design</span>
-                    <span className="mt-1 block">Encryption, access control, and audit trails aligned to public safety requirements.</span>
+                    <span className="block font-semibold text-white">Security</span>
+                    <span className="mt-1 block">Encryption, access control, and audit logging for public-safety deployments.</span>
                   </li>
                 </ul>
               </aside>
@@ -270,7 +270,7 @@ const App = () => {
               </p>
               <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Real-time operations</h2>
               <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
-                Integrated functions used together on live deployments. Each column maps to a distinct operational workload.
+                Three capabilities for live deployments.
               </p>
             </header>
             <div className="grid md:grid-cols-3 md:divide-x md:divide-[#071422]">
@@ -278,12 +278,12 @@ const App = () => {
                 {
                   code: '01',
                   title: 'Behavioral & situational analysis',
-                  desc: 'Acoustic and verbal patterns plus scene context to flag escalation risk early, grounded in published NLP research.',
+                  desc: 'Acoustic and verbal patterns plus scene context for escalation risk. Informed by published NLP research.',
                 },
                 {
                   code: '02',
                   title: 'Natural language search',
-                  desc: 'Describe subjects or situations in plain language across active feeds. No indexing of historical footage.',
+                  desc: 'Plain-language descriptions across active feeds. Queries run on live streams only.',
                 },
                 {
                   code: '03',
@@ -309,8 +309,8 @@ const App = () => {
               </p>
               <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">How agencies bring Protent online</h2>
               <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
-                From integration to live use, aligned with command staff and video-unit workflows. Phases are fixed-order; overlap
-                is allowed where infrastructure permits.
+                Integrate live feeds, run models continuously, then search and correlate. Steps may overlap where infrastructure
+                allows.
               </p>
             </header>
             <ol className="list-none">
@@ -323,12 +323,12 @@ const App = () => {
                 {
                   step: '02',
                   title: 'Operationalize signals',
-                  body: 'Verbal, acoustic, and situational models run continuously so supervisors see patterns before they require a manual review of every tile.',
+                  body: 'Verbal, acoustic, and situational models run continuously on ingested streams; supervisors receive prioritized signals across camera nodes.',
                 },
                 {
                   step: '03',
                   title: 'Search and correlate on demand',
-                  body: 'Natural language queries execute against live video only, with detection and re-identification across nodes when a match is operationally relevant.',
+                  body: 'Natural language queries against live video, with object detection and re-identification across nodes when criteria match.',
                 },
               ].map((block) => (
                 <li
@@ -356,9 +356,8 @@ const App = () => {
               </p>
               <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Works with your existing VMS</h2>
               <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
-                Protent is an intelligence layer: it does not replace your video management system. It prioritizes behavioral
-                and situational context on the same feeds your floor already watches, then adds natural language search when
-                teams need to narrow the picture.
+                Intelligence layer on your existing VMS feeds: behavioral and situational analysis on the same tiles the floor
+                watches, plus natural language search over those live streams.
               </p>
             </div>
             <div className="overflow-x-auto lg:col-span-7">
@@ -381,11 +380,11 @@ const App = () => {
                     },
                     {
                       title: 'Streaming analysis latency',
-                      desc: 'Processing tuned so supervisors receive signals while events are still unfolding.',
+                      desc: 'Low-latency processing so alerts reach supervisors during active events.',
                     },
                     {
                       title: 'Natural language queries',
-                      desc: 'Describe what you need; the system evaluates every active feed for a match.',
+                      desc: 'Each query is evaluated against every active feed.',
                     },
                     {
                       title: 'Re-identification across nodes',
@@ -408,24 +407,24 @@ const App = () => {
             <p className="pt-eyebrow mb-4 text-center">Differentiation</p>
             <h2 className="pt-h2 text-center text-2xl md:text-3xl">Built for simultaneous live feeds</h2>
             <p className="mx-auto mt-4 max-w-2xl text-center text-[17px] text-[#3d4d5c]">
-              Most general-purpose tools assume stored media or low camera counts. Protent assumes continuous live video and
-              command-staff workload.
+              Protent targets continuous live video at scale: many simultaneous feeds, supervisor workflows, and CJIS-sensitive
+              data.
             </p>
             <div className="mt-12 grid gap-6 md:grid-cols-2">
               <div className="border border-[#d7dde3] bg-[#f0f3f6] p-8 md:p-10">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5a6b7a]">Typical limitations</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5a6b7a]">Common setup</p>
                 <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-[#3d4d5c]">
-                  <li>Manual monitoring of large wall layouts, or post-incident review of stored video.</li>
-                  <li>Keyword and metadata search that misses natural descriptions of people, clothing, and context.</li>
-                  <li>Fragmented views that make it difficult to follow movement across cameras in real time.</li>
+                  <li>Large walls depend on manual scanning or review of stored recordings in the VMS.</li>
+                  <li>Search is often metadata- or keyword-based.</li>
+                  <li>Cross-camera follow-up requires switching contexts between player views.</li>
                 </ul>
               </div>
               <div className="border border-[#071422] bg-[#071422] p-8 text-white md:p-10">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">With Protent</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Protent</p>
                 <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/90">
-                  <li>Continuous behavioral and situational signals so supervisors are not inferring risk from raw tiles alone.</li>
-                  <li>Natural language search over live streams only, without building a searchable historical archive.</li>
-                  <li>Architecture and controls oriented toward CJIS-aligned handling of sensitive law enforcement data.</li>
+                  <li>Behavioral and situational signals on continuous live feeds.</li>
+                  <li>Natural language search on active streams; stored video stays in your VMS.</li>
+                  <li>CJIS-aligned architecture and controls for law enforcement video and intelligence data.</li>
                 </ul>
               </div>
             </div>
@@ -439,16 +438,14 @@ const App = () => {
                 <Lock className="h-6 w-6 text-[#0b5cab]" strokeWidth={1.75} />
                 <h2 className="pt-h2 mt-6 text-2xl md:text-3xl">CJIS-aligned security</h2>
                 <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
-                  Encryption, access control, and auditability are part of the product architecture, not a separate compliance
-                  project. Protent is designed for the standards public safety organizations expect when video and intelligence
-                  data are in scope.
+                  Encryption, access control, and audit logging are built into the product architecture for public-safety video
+                  and intelligence workloads.
                 </p>
               </div>
               <div className="flex flex-col justify-center p-10 md:p-12">
                 <div className="border-l-2 border-[#0b5cab] bg-[#f0f3f6] pl-5 pr-4 py-4">
                   <p className="text-[15px] leading-relaxed text-[#3d4d5c]">
-                    Our team focuses on the security and custody model so yours can focus on field operations and command
-                    decisions, without trading off chain-of-custody or policy requirements.
+                    Data custody, access policy, and audit requirements are addressed in the product design.
                   </p>
                 </div>
                 <a
@@ -469,8 +466,7 @@ const App = () => {
           <div className="mx-auto max-w-[640px] text-center">
             <h2 className="pt-h2 text-xl md:text-2xl">Schedule a briefing</h2>
             <p className="mt-3 text-[16px] text-[#3d4d5c]">
-              We will walk through your video environment, signal requirements, and deployment path with your technical and
-              command stakeholders.
+              Video topology, signal requirements, and deployment steps with your technical and command staff.
             </p>
             <a
               href={CALENDLY_DEMO}
@@ -493,8 +489,8 @@ const App = () => {
               <span className="text-[17px] font-semibold tracking-tight">Protent</span>
             </div>
             <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/65">
-              Live video intelligence for public safety agencies. Behavioral and situational signals, natural language search,
-              and security controls built for regulated environments.
+              Live-feed analysis, natural language search on active streams, and CJIS-oriented security for public safety
+              agencies.
             </p>
           </div>
           <div>
