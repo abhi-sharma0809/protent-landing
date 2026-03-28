@@ -1,14 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  Target,
-  MessageSquare,
-  Activity,
-  CheckCircle,
-  Lock,
-  Linkedin,
-  ArrowRight,
-} from 'lucide-react';
+import { Lock, Linkedin, ArrowRight } from 'lucide-react';
 import './globals.css';
 
 const CALENDLY_DEMO =
@@ -17,140 +9,53 @@ const CALENDLY_DEMO =
 
 const INK = '#071422';
 
-/** Optional full-bleed MP4; otherwise the hero uses the built-in Protent graphic. */
+/** Optional full-bleed MP4; takes precedence over the default hero photograph. */
 const HERO_FULL_BLEED_URL = (import.meta.env.VITE_HERO_VIDEO_URL as string | undefined)?.trim() || '';
+
+/** Default hero still (SOC / command floor). Override with absolute or root-relative URL. */
+const HERO_IMAGE_URL =
+  (import.meta.env.VITE_HERO_IMAGE_URL as string | undefined)?.trim() || '/hero-soc.png';
 
 const LOGO_STROKE_USER_UNITS = 7;
 
-const HERO_GRID = (() => {
-  const gw = 268;
-  const gh = 228;
-  const gx0 = 52;
-  const gy0 = 96;
-  const gap = 10;
-  const cells: { x: number; y: number }[] = [];
-  for (let r = 0; r < 3; r += 1) {
-    for (let c = 0; c < 4; c += 1) {
-      cells.push({ x: gx0 + c * (gw + gap), y: gy0 + r * (gh + gap) });
-    }
-  }
-  return { gw, gh, cells, hub: { x: 1288, y: 448 } };
-})();
+function HeroBackdropOverlays({ variant }: { variant: 'media' | 'video' }) {
+  const specGrid = variant === 'video';
+  const hideOnReduce = specGrid;
 
-/** Abstract multi-feed + intelligence hub (matches brand: many live inputs, one operational picture). */
-function ProtentHeroGraphic() {
-  const { gw, gh, cells, hub } = HERO_GRID;
-  return (
-    <div className="pointer-events-none absolute inset-0 z-0 motion-reduce:hidden" aria-hidden>
-      <svg
-        className="h-full w-full"
-        viewBox="0 0 1600 900"
-        preserveAspectRatio="xMidYMid slice"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <linearGradient id="phg-sky" x1="0" y1="0" x2="0.85" y2="1">
-            <stop offset="0%" stopColor="#030a12" />
-            <stop offset="55%" stopColor="#071422" />
-            <stop offset="100%" stopColor="#0c1f33" />
-          </linearGradient>
-          <linearGradient id="phg-tile" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="rgba(140, 185, 220, 0.14)" />
-            <stop offset="45%" stopColor="rgba(255, 255, 255, 0.035)" />
-            <stop offset="100%" stopColor="rgba(11, 92, 171, 0.1)" />
-          </linearGradient>
-          <linearGradient id="phg-hub" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="rgba(11, 92, 171, 0.45)" />
-            <stop offset="100%" stopColor="rgba(11, 92, 171, 0.08)" />
-          </linearGradient>
-        </defs>
-        <rect width="1600" height="900" fill="url(#phg-sky)" />
-        <g opacity={0.9}>
-          {cells.map((cell, i) => (
-            <g key={i}>
-              <rect
-                x={cell.x}
-                y={cell.y}
-                width={gw}
-                height={gh}
-                rx={2}
-                fill="url(#phg-tile)"
-                stroke="rgba(255,255,255,0.09)"
-                strokeWidth={1}
-              />
-              <rect
-                x={cell.x + 12}
-                y={cell.y + gh - 28}
-                width={gw - 24}
-                height={4}
-                fill="rgba(11,92,171,0.35)"
-                rx={1}
-              />
-            </g>
-          ))}
-        </g>
-        {cells.map((cell, i) => {
-          const cx = cell.x + gw / 2;
-          const cy = cell.y + gh / 2;
-          return (
-            <line
-              key={`ln-${i}`}
-              x1={cx}
-              y1={cy}
-              x2={hub.x}
-              y2={hub.y}
-              stroke="rgba(11, 92, 171, 0.14)"
-              strokeWidth={1}
-            />
-          );
-        })}
-        <g transform={`translate(${hub.x}, ${hub.y})`}>
-          <circle r={138} fill="url(#phg-hub)" opacity={0.25} />
-          <circle r={118} stroke="rgba(11,92,171,0.5)" strokeWidth={1.5} fill="none" />
-          <circle r={98} stroke="rgba(255,255,255,0.12)" strokeWidth={1} fill="none" />
-          <path
-            d="M -32 -48 A 38 38 0 0 0 -32 48"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth={5}
-            strokeLinecap="square"
-            fill="none"
-          />
-          <path
-            d="M 32 -48 A 38 38 0 0 1 32 48"
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth={5}
-            strokeLinecap="square"
-            fill="none"
-          />
-          <line
-            x1={0}
-            y1={-38}
-            x2={0}
-            y2={38}
-            stroke="rgba(255,255,255,0.22)"
-            strokeWidth={5}
-            strokeLinecap="square"
-          />
-        </g>
-      </svg>
-      <HeroBackdropOverlays />
-    </div>
-  );
-}
-
-function HeroBackdropOverlays() {
   return (
     <>
-      <div className="hero-intel-overlay motion-reduce:hidden" aria-hidden />
-      <div className="absolute inset-0 hidden bg-[#071422] motion-reduce:block" aria-hidden />
+      {specGrid ? <div className="hero-intel-overlay motion-reduce:hidden" aria-hidden /> : null}
+      {hideOnReduce ? (
+        <div className="absolute inset-0 hidden bg-[#071422] motion-reduce:block" aria-hidden />
+      ) : null}
       <div
-        className="absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/92 to-[#071422]/50 motion-reduce:hidden"
+        className={
+          variant === 'media'
+            ? 'absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/78 via-[28%] to-[#071422]/14'
+            : 'absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/92 to-[#071422]/50 motion-reduce:hidden'
+        }
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-gradient-to-t from-[#071422]/92 via-transparent to-[#071422]/45 motion-reduce:hidden"
+        className={
+          variant === 'media'
+            ? 'absolute inset-0 bg-gradient-to-t from-[#071422]/82 via-transparent to-[#071422]/40'
+            : 'absolute inset-0 bg-gradient-to-t from-[#071422]/92 via-transparent to-[#071422]/45 motion-reduce:hidden'
+        }
         aria-hidden
       />
+      {variant === 'media' ? (
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-[#071422]/90 from-[0%] via-transparent via-[38%] to-transparent to-[55%]"
+          aria-hidden
+        />
+      ) : null}
+      {variant === 'media' ? (
+        <div
+          className="absolute inset-0 bg-[#0b5cab]/[0.05] mix-blend-overlay motion-reduce:mix-blend-normal motion-reduce:bg-transparent"
+          aria-hidden
+        />
+      ) : null}
     </>
   );
 }
@@ -182,7 +87,23 @@ function HeroSingleVideoBackdrop({ src }: { src: string }) {
         preload="auto"
         aria-hidden
       />
-      <HeroBackdropOverlays />
+      <HeroBackdropOverlays variant="video" />
+    </div>
+  );
+}
+
+function HeroPhotoBackdrop({ src }: { src: string }) {
+  return (
+    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#071422]">
+      <img
+        src={src}
+        alt=""
+        className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 object-cover object-[34%_46%] h-[112%] w-[112%] md:h-[108%] md:w-[108%] md:object-[36%_48%]"
+        decoding="async"
+        fetchPriority="high"
+        aria-hidden
+      />
+      <HeroBackdropOverlays variant="media" />
     </div>
   );
 }
@@ -191,14 +112,7 @@ function HeroBackdrop() {
   if (HERO_FULL_BLEED_URL) {
     return <HeroSingleVideoBackdrop src={HERO_FULL_BLEED_URL} />;
   }
-  return (
-    <>
-      <ProtentHeroGraphic />
-      <div className="pointer-events-none absolute inset-0 z-0 hidden motion-reduce:block">
-        <div className="absolute inset-0 bg-[#071422]" aria-hidden />
-      </div>
-    </>
-  );
+  return <HeroPhotoBackdrop src={HERO_IMAGE_URL} />;
 }
 
 function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; stroke?: string }) {
@@ -348,37 +262,39 @@ const App = () => {
           </div>
         </section>
 
-        <section id="product" className="scroll-mt-24 border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px]">
-            <div className="max-w-2xl">
-              <p className="pt-eyebrow mb-4">Platform</p>
-              <h2 className="pt-h2 text-2xl md:text-3xl">Capabilities for real-time operations</h2>
-              <p className="mt-4 text-[17px] leading-relaxed text-[#3d4d5c]">
-                Three integrated functions agencies use together during live deployments.
+        <section id="product" className="scroll-mt-24 border-b-2 border-[#071422] bg-[#e8eaed] px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white">
+            <header className="border-b border-[#071422] px-6 py-8 md:px-10 md:py-10">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
+                Platform — capability matrix
               </p>
-            </div>
-            <div className="mt-12 grid gap-px bg-[#d7dde3] md:grid-cols-3">
+              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Real-time operations</h2>
+              <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
+                Integrated functions used together on live deployments. Each column maps to a distinct operational workload.
+              </p>
+            </header>
+            <div className="grid md:grid-cols-3 md:divide-x md:divide-[#071422]">
               {[
                 {
-                  icon: <Activity className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
+                  code: '01',
                   title: 'Behavioral & situational analysis',
                   desc: 'Acoustic and verbal patterns plus scene context to flag escalation risk early, grounded in published NLP research.',
                 },
                 {
-                  icon: <MessageSquare className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
+                  code: '02',
                   title: 'Natural language search',
                   desc: 'Describe subjects or situations in plain language across active feeds. No indexing of historical footage.',
                 },
                 {
-                  icon: <Target className="h-5 w-5 text-[#0b5cab]" strokeWidth={1.75} />,
+                  code: '03',
                   title: 'Precision detection',
                   desc: 'Weapons, vehicles, and evidence-class objects in real time using enterprise computer vision.',
                 },
               ].map((item) => (
-                <article key={item.title} className="bg-white p-8 md:p-10">
-                  <div className="mb-6">{item.icon}</div>
-                  <h3 className="text-lg font-semibold text-[#071422]">{item.title}</h3>
-                  <p className="mt-3 text-[15px] leading-relaxed text-[#3d4d5c]">{item.desc}</p>
+                <article key={item.code} className="border-b border-[#071422] px-6 py-8 last:border-b-0 md:border-b-0 md:px-8 md:py-10 lg:px-10">
+                  <p className="font-mono text-[12px] font-semibold tabular-nums text-[#071422]">{item.code}</p>
+                  <h3 className="mt-3 text-[14px] font-bold uppercase tracking-[0.06em] text-[#071422]">{item.title}</h3>
+                  <p className="mt-3 text-[14px] leading-relaxed text-[#3d4d5c]">{item.desc}</p>
                 </article>
               ))}
             </div>
@@ -386,13 +302,18 @@ const App = () => {
         </section>
 
         <section id="how" className="scroll-mt-24 border-b border-[#d7dde3] bg-white px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[800px]">
-            <p className="pt-eyebrow mb-4 text-center">Deployment</p>
-            <h2 className="pt-h2 text-center text-2xl md:text-3xl">How agencies bring Protent online</h2>
-            <p className="mx-auto mt-4 max-w-xl text-center text-[17px] text-[#3d4d5c]">
-              From integration to live use, structured around how command staff and video units already work.
-            </p>
-            <ol className="mt-14 space-y-0 divide-y divide-[#d7dde3] border-y border-[#d7dde3]">
+          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white">
+            <header className="border-b border-[#071422] px-6 py-8 md:px-10 md:py-10">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
+                Deployment — implementation sequence
+              </p>
+              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">How agencies bring Protent online</h2>
+              <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
+                From integration to live use, aligned with command staff and video-unit workflows. Phases are fixed-order; overlap
+                is allowed where infrastructure permits.
+              </p>
+            </header>
+            <ol className="list-none">
               {[
                 {
                   step: '01',
@@ -410,11 +331,16 @@ const App = () => {
                   body: 'Natural language queries execute against live video only, with detection and re-identification across nodes when a match is operationally relevant.',
                 },
               ].map((block) => (
-                <li key={block.step} className="flex flex-col gap-4 py-8 sm:flex-row sm:gap-10">
-                  <span className="w-10 shrink-0 text-sm font-semibold tabular-nums text-[#0b5cab]">{block.step}</span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-[#071422]">{block.title}</h3>
-                    <p className="mt-2 text-[15px] leading-relaxed text-[#3d4d5c]">{block.body}</p>
+                <li
+                  key={block.step}
+                  className="grid border-b border-[#071422] last:border-b-0 md:grid-cols-[minmax(5.5rem,7rem)_1fr]"
+                >
+                  <div className="border-b border-[#071422] bg-[#f0f2f4] px-5 py-5 font-mono text-[13px] font-semibold tabular-nums text-[#071422] md:border-b-0 md:border-r md:border-[#071422] md:px-6 md:py-6">
+                    {block.step}
+                  </div>
+                  <div className="px-5 py-6 md:px-8 md:py-6">
+                    <h3 className="text-[15px] font-bold text-[#071422]">{block.title}</h3>
+                    <p className="mt-2 text-[14px] leading-relaxed text-[#3d4d5c]">{block.body}</p>
                   </div>
                 </li>
               ))}
@@ -422,45 +348,58 @@ const App = () => {
           </div>
         </section>
 
-        <section className="border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px] lg:grid lg:grid-cols-12 lg:gap-16">
-            <div className="lg:col-span-5">
-              <p className="pt-eyebrow mb-4">Operations</p>
-              <h2 className="pt-h2 text-2xl md:text-3xl">Works with your existing VMS</h2>
-              <p className="mt-4 text-[17px] leading-relaxed text-[#3d4d5c]">
+        <section className="border-b border-[#071422] bg-[#e8eaed] px-5 py-16 md:px-10 md:py-20">
+          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white lg:grid lg:grid-cols-12">
+            <div className="border-b border-[#071422] p-6 md:p-10 lg:col-span-5 lg:border-b-0 lg:border-r">
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
+                Operations — VMS integration
+              </p>
+              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Works with your existing VMS</h2>
+              <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
                 Protent is an intelligence layer: it does not replace your video management system. It prioritizes behavioral
                 and situational context on the same feeds your floor already watches, then adds natural language search when
                 teams need to narrow the picture.
               </p>
             </div>
-            <ul className="mt-10 space-y-0 divide-y divide-[#d7dde3] border border-[#d7dde3] bg-white lg:col-span-7 lg:mt-0">
-              {[
-                {
-                  title: 'Behavioral & situational analysis',
-                  desc: 'Language, tone, and scene dynamics interpreted on a continuous basis.',
-                },
-                {
-                  title: 'Streaming analysis latency',
-                  desc: 'Processing tuned so supervisors receive signals while events are still unfolding.',
-                },
-                {
-                  title: 'Natural language queries',
-                  desc: 'Describe what you need; the system evaluates every active feed for a match.',
-                },
-                {
-                  title: 'Re-identification across nodes',
-                  desc: 'Track continuity as subjects move between cameras on the deployment.',
-                },
-              ].map((row) => (
-                <li key={row.title} className="flex gap-4 px-6 py-5">
-                  <CheckCircle className="mt-0.5 h-5 w-5 shrink-0 text-[#0b5cab]" strokeWidth={1.75} />
-                  <div>
-                    <p className="font-semibold text-[#071422]">{row.title}</p>
-                    <p className="mt-1 text-[14px] leading-relaxed text-[#3d4d5c]">{row.desc}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
+            <div className="overflow-x-auto lg:col-span-7">
+              <table className="w-full min-w-[320px] border-collapse text-left text-[14px]">
+                <thead>
+                  <tr className="border-b border-[#071422] bg-[#f0f2f4]">
+                    <th className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#3d4d5c] md:px-6">
+                      Function
+                    </th>
+                    <th className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#3d4d5c] md:px-6">
+                      Specification
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    {
+                      title: 'Behavioral & situational analysis',
+                      desc: 'Language, tone, and scene dynamics interpreted on a continuous basis.',
+                    },
+                    {
+                      title: 'Streaming analysis latency',
+                      desc: 'Processing tuned so supervisors receive signals while events are still unfolding.',
+                    },
+                    {
+                      title: 'Natural language queries',
+                      desc: 'Describe what you need; the system evaluates every active feed for a match.',
+                    },
+                    {
+                      title: 'Re-identification across nodes',
+                      desc: 'Track continuity as subjects move between cameras on the deployment.',
+                    },
+                  ].map((row) => (
+                    <tr key={row.title} className="border-b border-[#d7dde3] last:border-b-0">
+                      <td className="w-[38%] align-top px-5 py-4 font-semibold text-[#071422] md:px-6">{row.title}</td>
+                      <td className="align-top px-5 py-4 leading-relaxed text-[#3d4d5c] md:px-6">{row.desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
