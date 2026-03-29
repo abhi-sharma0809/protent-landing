@@ -115,6 +115,115 @@ function HeroBackdrop() {
   return <HeroPhotoBackdrop src={HERO_IMAGE_URL} />;
 }
 
+function UiPanel({
+  eyebrow,
+  badge,
+  children,
+}: {
+  eyebrow: string;
+  badge?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-zinc-600/50 bg-gradient-to-b from-zinc-800/95 to-[#0c0e11] shadow-[0_24px_64px_-12px_rgba(0,0,0,0.45)] ring-1 ring-black/30">
+      <div className="flex items-center justify-between border-b border-white/[0.07] px-4 py-3 md:px-5">
+        <span className="font-mono-pt text-[10px] font-medium uppercase tracking-[0.16em] text-zinc-500">{eyebrow}</span>
+        {badge ? (
+          <span className="rounded-md bg-emerald-500/12 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-400/95">
+            {badge}
+          </span>
+        ) : null}
+      </div>
+      <div className="p-4 md:p-5">{children}</div>
+    </div>
+  );
+}
+
+function MockSignalAnalysis() {
+  return (
+    <UiPanel eyebrow="Signal console" badge="Live ingest">
+      <div className="space-y-3">
+        <div className="flex gap-2">
+          {['N-04', 'E-12', 'S-01'].map((id) => (
+            <div
+              key={id}
+              className="flex-1 rounded-lg bg-zinc-950/80 py-6 text-center font-mono-pt text-[9px] font-medium uppercase tracking-wider text-zinc-600 ring-1 ring-white/[0.06]"
+            >
+              {id}
+            </div>
+          ))}
+        </div>
+        <div className="rounded-lg bg-zinc-950/60 p-3 ring-1 ring-white/[0.05]">
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-zinc-400">Acoustic / verbal fusion</span>
+            <span className="font-mono-pt text-amber-400/90">Elevated</span>
+          </div>
+          <div className="mt-2 h-8 w-full rounded bg-[#0b5cab]/20">
+            <div className="h-full w-[72%] rounded bg-[#0b5cab]/55" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between rounded-lg bg-zinc-950/50 px-3 py-2 font-mono-pt text-[10px] text-zinc-500 ring-1 ring-white/[0.04]">
+          <span>Scene context</span>
+          <span className="text-zinc-300">Streaming</span>
+        </div>
+      </div>
+    </UiPanel>
+  );
+}
+
+function MockNlSearch() {
+  return (
+    <UiPanel eyebrow="Query surface" badge="Active feeds">
+      <div className="space-y-3">
+        <div className="rounded-lg border border-white/[0.08] bg-zinc-950/70 px-3 py-2.5 font-mono-pt text-[11px] text-zinc-400">
+          <span className="text-zinc-600">&gt; </span>gray hoodie, north lot, last 90s
+        </div>
+        <div className="space-y-2">
+          {[
+            { cam: 'CAM-218', state: 'Match' },
+            { cam: 'CAM-094', state: 'Scan' },
+            { cam: 'CAM-441', state: 'Idle' },
+          ].map((row) => (
+            <div
+              key={row.cam}
+              className="flex items-center justify-between rounded-lg bg-zinc-950/45 px-3 py-2 ring-1 ring-white/[0.05]"
+            >
+              <span className="font-mono-pt text-[10px] text-zinc-400">{row.cam}</span>
+              <span
+                className={`font-mono-pt text-[9px] font-semibold uppercase tracking-wide ${
+                  row.state === 'Match' ? 'text-[#5eb0e8]' : row.state === 'Scan' ? 'text-amber-400/80' : 'text-zinc-600'
+                }`}
+              >
+                {row.state}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </UiPanel>
+  );
+}
+
+function MockDetection() {
+  return (
+    <UiPanel eyebrow="Object pipeline" badge="CV">
+      <div className="grid grid-cols-2 gap-2">
+        {[
+          { label: 'Vehicle class', v: 'SUV · conf 0.91' },
+          { label: 'Evidence-class', v: 'Bag · tracked' },
+          { label: 'Weapon cue', v: 'None' },
+          { label: 'Re-ID', v: 'Node handoff' },
+        ].map((row) => (
+          <div key={row.label} className="rounded-lg bg-zinc-950/55 px-2.5 py-2 ring-1 ring-white/[0.05]">
+            <p className="font-mono-pt text-[9px] font-medium uppercase tracking-wide text-zinc-600">{row.label}</p>
+            <p className="mt-1 text-[11px] font-medium text-zinc-300">{row.v}</p>
+          </div>
+        ))}
+      </div>
+    </UiPanel>
+  );
+}
+
 function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; stroke?: string }) {
   return (
     <svg
@@ -157,32 +266,25 @@ const LogoMark = ({ size = 32, stroke = INK }: { size?: number; stroke?: string 
   <ProtentLogo size={size} stroke={stroke} />
 );
 
-const Logo = () => (
-  <div className="flex items-center gap-2.5" style={{ color: INK }}>
-    <LogoMark size={36} stroke={INK} />
-    <span className="text-[17px] font-semibold tracking-tight">Protent</span>
-  </div>
-);
-
 const App = () => {
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#071422]">
-      <header className="sticky top-0 z-50 border-b border-[#d7dde3] bg-white">
-        <nav className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-5 py-4 md:px-10">
+    <div className="min-h-screen bg-[#fafafa] text-[#071422]">
+      <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-md">
+        <nav className="mx-auto flex max-w-[1180px] items-center justify-between gap-4 px-5 py-3.5 md:px-8">
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 rounded-sm outline-none ring-[#0b5cab] focus-visible:ring-2 focus-visible:ring-offset-2"
+            className="flex items-center gap-2.5 rounded-lg outline-none ring-[#0b5cab] focus-visible:ring-2 focus-visible:ring-offset-2"
             aria-label="Protent home"
           >
-            <LogoMark size={30} stroke={INK} />
-            <span className="text-[17px] font-semibold tracking-tight text-[#071422]">Protent</span>
+            <LogoMark size={28} stroke={INK} />
+            <span className="text-[16px] font-semibold tracking-tight text-[#071422]">Protent</span>
           </button>
-          <div className="hidden items-center gap-10 text-[15px] font-medium text-[#3d4d5c] md:flex">
+          <div className="hidden items-center gap-9 text-[14px] font-medium text-zinc-600 md:flex">
             <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-[#071422]">
               Platform
             </button>
@@ -190,7 +292,7 @@ const App = () => {
               Deployment
             </button>
             <button type="button" onClick={() => scrollToSection('compare')} className="transition hover:text-[#071422]">
-              Differentiation
+              Scope
             </button>
             <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-[#071422]">
               Security
@@ -200,120 +302,128 @@ const App = () => {
             href={CALENDLY_DEMO}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 bg-[#071422] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#0c2438]"
+            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#071422] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[#0c2438]"
           >
-            Book a Demo
-            <ArrowRight className="h-4 w-4" aria-hidden />
+            Book a demo
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
           </a>
         </nav>
       </header>
 
       <main>
-        <section className="relative min-h-[78vh] overflow-hidden border-b border-[#d7dde3]">
+        <section className="relative min-h-[88vh] overflow-hidden">
           <HeroBackdrop />
-          <div className="relative z-10 px-5 py-20 md:px-10 md:py-28 lg:min-h-[78vh] lg:py-32">
-            <div className="mx-auto flex max-w-[1200px] flex-col justify-center lg:min-h-[calc(78vh-8rem)] lg:grid lg:grid-cols-12 lg:gap-14 lg:items-center">
-              <div className="lg:col-span-7">
-                <p className="mb-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/65">Live video intelligence</p>
-                <h1 className="pt-h1 text-[2rem] leading-[1.18] text-white md:text-[2.5rem] lg:text-[2.75rem]">
-                  Situational awareness from every feed you operate.
-                </h1>
-                <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-white/80">
-                  Behavioral and situational analysis on live feeds. Natural language search over active streams. Architecture
-                  and controls for CJIS-aligned deployments.
-                </p>
-                <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href={CALENDLY_DEMO}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex w-full items-center justify-center gap-2 bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] transition hover:bg-white/95 sm:w-auto"
+          <div className="relative z-10 flex min-h-[88vh] flex-col items-center justify-center px-5 py-24 text-center md:px-8">
+            <div className="mx-auto max-w-[820px]">
+              <p className="font-mono-pt mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-white/55">
+                Live video intelligence
+              </p>
+              <h1 className="pt-h1 text-[2.25rem] leading-[1.12] text-white md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
+                Situational awareness from every feed you operate.
+              </h1>
+              <p className="mx-auto mt-8 max-w-[540px] text-[17px] leading-relaxed text-white/78 md:text-lg">
+                Behavioral and situational analysis on live feeds. Natural language search over active streams. Architecture
+                and controls for CJIS-aligned deployments.
+              </p>
+              <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <a
+                  href={CALENDLY_DEMO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] shadow-lg shadow-black/15 transition hover:bg-zinc-100"
+                >
+                  Book a demo
+                  <ArrowRight className="h-4 w-4" aria-hidden />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection('product')}
+                  className="text-[14px] font-semibold text-white/85 underline decoration-white/25 underline-offset-[6px] transition hover:decoration-white/50"
+                >
+                  View platform
+                </button>
+              </div>
+              <div className="mt-14 flex flex-wrap justify-center gap-2.5">
+                {[
+                  'Live streams only',
+                  'Continuous verbal & scene models',
+                  'Encryption · access · audit logging',
+                ].map((label) => (
+                  <span
+                    key={label}
+                    className="rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur-sm"
                   >
-                    Book a Demo
-                    <ArrowRight className="h-4 w-4" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => scrollToSection('product')}
-                    className="w-full border border-white/35 bg-white/5 px-8 py-3.5 text-[14px] font-semibold text-white backdrop-blur-[2px] transition hover:border-white/55 hover:bg-white/10 sm:w-auto"
-                  >
-                    View platform
-                  </button>
+                    {label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="product" className="scroll-mt-20 border-b border-zinc-200/90 bg-white py-20 md:py-28">
+          <div className="pt-section">
+            <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Platform</p>
+            <h2 className="pt-h2 mt-4 max-w-[720px] text-3xl md:text-4xl md:leading-tight">
+              One intelligence layer across the feeds your floor already runs.
+            </h2>
+            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-zinc-600">
+              Three capabilities for live deployments: signal analysis, natural language search, and detection on the stream.
+            </p>
+
+            <div className="mt-20 space-y-24 md:mt-28 md:space-y-32">
+              <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">
+                    Behavioral & situational analysis
+                  </h3>
+                  <p className="mt-4 text-[16px] leading-relaxed text-zinc-600">
+                    Acoustic and verbal patterns plus scene context for escalation risk. Informed by published NLP research.
+                  </p>
+                </div>
+                <MockSignalAnalysis />
+              </div>
+              <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+                <div className="lg:order-2">
+                  <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">Natural language search</h3>
+                  <p className="mt-4 text-[16px] leading-relaxed text-zinc-600">
+                    Plain-language descriptions across active feeds. Queries run on live streams only.
+                  </p>
+                </div>
+                <div className="lg:order-1">
+                  <MockNlSearch />
                 </div>
               </div>
-              <aside className="mt-14 border border-white/20 bg-black/35 p-8 backdrop-blur-md lg:col-span-5 lg:mt-0">
-                <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.22em] text-white/55">At a glance</p>
-                <ul className="space-y-5 text-[15px] leading-snug text-white/75">
-                  <li className="border-l-2 border-[#5eb0e8] pl-4">
-                    <span className="block font-semibold text-white">Live streams only</span>
-                    <span className="mt-1 block">Search and analysis run on active feeds.</span>
-                  </li>
-                  <li className="border-l-2 border-white/25 pl-4">
-                    <span className="block font-semibold text-white">Continuous models</span>
-                    <span className="mt-1 block">Verbal, acoustic, and situational models on live video.</span>
-                  </li>
-                  <li className="border-l-2 border-white/25 pl-4">
-                    <span className="block font-semibold text-white">Security</span>
-                    <span className="mt-1 block">Encryption, access control, and audit logging for public-safety deployments.</span>
-                  </li>
-                </ul>
-              </aside>
+              <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+                <div>
+                  <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">Precision detection</h3>
+                  <p className="mt-4 text-[16px] leading-relaxed text-zinc-600">
+                    Weapons, vehicles, and evidence-class objects in real time using enterprise computer vision.
+                  </p>
+                </div>
+                <MockDetection />
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="product" className="scroll-mt-24 border-b-2 border-[#071422] bg-[#e8eaed] px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white">
-            <header className="border-b border-[#071422] px-6 py-8 md:px-10 md:py-10">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
-                Platform — capability matrix
-              </p>
-              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Real-time operations</h2>
-              <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
-                Three capabilities for live deployments.
-              </p>
-            </header>
-            <div className="grid md:grid-cols-3 md:divide-x md:divide-[#071422]">
-              {[
-                {
-                  code: '01',
-                  title: 'Behavioral & situational analysis',
-                  desc: 'Acoustic and verbal patterns plus scene context for escalation risk. Informed by published NLP research.',
-                },
-                {
-                  code: '02',
-                  title: 'Natural language search',
-                  desc: 'Plain-language descriptions across active feeds. Queries run on live streams only.',
-                },
-                {
-                  code: '03',
-                  title: 'Precision detection',
-                  desc: 'Weapons, vehicles, and evidence-class objects in real time using enterprise computer vision.',
-                },
-              ].map((item) => (
-                <article key={item.code} className="border-b border-[#071422] px-6 py-8 last:border-b-0 md:border-b-0 md:px-8 md:py-10 lg:px-10">
-                  <p className="font-mono text-[12px] font-semibold tabular-nums text-[#071422]">{item.code}</p>
-                  <h3 className="mt-3 text-[14px] font-bold uppercase tracking-[0.06em] text-[#071422]">{item.title}</h3>
-                  <p className="mt-3 text-[14px] leading-relaxed text-[#3d4d5c]">{item.desc}</p>
-                </article>
-              ))}
-            </div>
+        <section className="border-b border-zinc-200/90 bg-zinc-50 py-14 md:py-16">
+          <div className="pt-section text-center">
+            <p className="mx-auto max-w-3xl text-lg font-medium leading-snug text-[#071422] md:text-xl md:leading-snug">
+              Higher camera counts and wall density increase load. Protent surfaces prioritized signals on top of live tiles.
+            </p>
           </div>
         </section>
 
-        <section id="how" className="scroll-mt-24 border-b border-[#d7dde3] bg-white px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white">
-            <header className="border-b border-[#071422] px-6 py-8 md:px-10 md:py-10">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
-                Deployment — implementation sequence
-              </p>
-              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">How agencies bring Protent online</h2>
-              <p className="mt-3 max-w-3xl text-[15px] leading-relaxed text-[#3d4d5c]">
-                Integrate live feeds, run models continuously, then search and correlate. Steps may overlap where infrastructure
-                allows.
-              </p>
-            </header>
-            <ol className="list-none">
+        <section id="how" className="scroll-mt-20 border-b border-zinc-200/90 bg-white py-20 md:py-28">
+          <div className="pt-section">
+            <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Deployment</p>
+            <h2 className="pt-h2 mt-4 max-w-[640px] text-3xl md:text-4xl md:leading-tight">Bring Protent online in three moves.</h2>
+            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-zinc-600">
+              Integrate live feeds, run models continuously, then search and correlate. Steps may overlap where infrastructure
+              allows.
+            </p>
+            <ol className="mt-16 grid list-none gap-6 md:mt-20 md:grid-cols-3 md:gap-8">
               {[
                 {
                   step: '01',
@@ -331,97 +441,89 @@ const App = () => {
                   body: 'Natural language queries against live video, with object detection and re-identification across nodes when criteria match.',
                 },
               ].map((block) => (
-                <li
-                  key={block.step}
-                  className="grid border-b border-[#071422] last:border-b-0 md:grid-cols-[minmax(5.5rem,7rem)_1fr]"
-                >
-                  <div className="border-b border-[#071422] bg-[#f0f2f4] px-5 py-5 font-mono text-[13px] font-semibold tabular-nums text-[#071422] md:border-b-0 md:border-r md:border-[#071422] md:px-6 md:py-6">
-                    {block.step}
-                  </div>
-                  <div className="px-5 py-6 md:px-8 md:py-6">
-                    <h3 className="text-[15px] font-bold text-[#071422]">{block.title}</h3>
-                    <p className="mt-2 text-[14px] leading-relaxed text-[#3d4d5c]">{block.body}</p>
-                  </div>
+                <li key={block.step} className="rounded-2xl border border-zinc-200/90 bg-zinc-50/80 p-6 shadow-sm md:p-8">
+                  <span className="font-mono-pt text-[12px] font-semibold tabular-nums text-[#0b5cab]">{block.step}</span>
+                  <h3 className="mt-4 text-lg font-semibold text-[#071422]">{block.title}</h3>
+                  <p className="mt-3 text-[15px] leading-relaxed text-zinc-600">{block.body}</p>
                 </li>
               ))}
             </ol>
           </div>
         </section>
 
-        <section className="border-b border-[#071422] bg-[#e8eaed] px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px] border border-[#071422] bg-white lg:grid lg:grid-cols-12">
-            <div className="border-b border-[#071422] p-6 md:p-10 lg:col-span-5 lg:border-b-0 lg:border-r">
-              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-[#3d4d5c]">
-                Operations — VMS integration
-              </p>
-              <h2 className="pt-h2 mt-3 text-[22px] md:text-[26px]">Works with your existing VMS</h2>
-              <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
+        <section className="border-b border-zinc-200/90 bg-zinc-50 py-20 md:py-28">
+          <div className="pt-section rounded-3xl border border-zinc-200/90 bg-white p-8 shadow-sm md:p-12 lg:grid lg:grid-cols-12 lg:gap-12 lg:p-14">
+            <div className="lg:col-span-5">
+              <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Operations</p>
+              <h2 className="pt-h2 mt-4 text-2xl md:text-3xl">Works with your existing VMS</h2>
+              <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
                 Intelligence layer on your existing VMS feeds: behavioral and situational analysis on the same tiles the floor
                 watches, plus natural language search over those live streams.
               </p>
             </div>
-            <div className="overflow-x-auto lg:col-span-7">
-              <table className="w-full min-w-[320px] border-collapse text-left text-[14px]">
-                <thead>
-                  <tr className="border-b border-[#071422] bg-[#f0f2f4]">
-                    <th className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#3d4d5c] md:px-6">
-                      Function
-                    </th>
-                    <th className="px-5 py-3 font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-[#3d4d5c] md:px-6">
-                      Specification
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    {
-                      title: 'Behavioral & situational analysis',
-                      desc: 'Language, tone, and scene dynamics interpreted on a continuous basis.',
-                    },
-                    {
-                      title: 'Streaming analysis latency',
-                      desc: 'Low-latency processing so alerts reach supervisors during active events.',
-                    },
-                    {
-                      title: 'Natural language queries',
-                      desc: 'Each query is evaluated against every active feed.',
-                    },
-                    {
-                      title: 'Re-identification across nodes',
-                      desc: 'Track continuity as subjects move between cameras on the deployment.',
-                    },
-                  ].map((row) => (
-                    <tr key={row.title} className="border-b border-[#d7dde3] last:border-b-0">
-                      <td className="w-[38%] align-top px-5 py-4 font-semibold text-[#071422] md:px-6">{row.title}</td>
-                      <td className="align-top px-5 py-4 leading-relaxed text-[#3d4d5c] md:px-6">{row.desc}</td>
+            <div className="mt-10 overflow-x-auto lg:col-span-7 lg:mt-0">
+              <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-zinc-50/50">
+                <table className="w-full min-w-[300px] border-collapse text-left text-[14px]">
+                  <thead>
+                    <tr className="border-b border-zinc-200/90 bg-zinc-100/80">
+                      <th className="px-4 py-3 font-mono-pt text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-500 md:px-5">
+                        Function
+                      </th>
+                      <th className="px-4 py-3 font-mono-pt text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-500 md:px-5">
+                        Specification
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {[
+                      {
+                        title: 'Behavioral & situational analysis',
+                        desc: 'Language, tone, and scene dynamics interpreted on a continuous basis.',
+                      },
+                      {
+                        title: 'Streaming analysis latency',
+                        desc: 'Low-latency processing so alerts reach supervisors during active events.',
+                      },
+                      {
+                        title: 'Natural language queries',
+                        desc: 'Each query is evaluated against every active feed.',
+                      },
+                      {
+                        title: 'Re-identification across nodes',
+                        desc: 'Track continuity as subjects move between cameras on the deployment.',
+                      },
+                    ].map((row) => (
+                      <tr key={row.title} className="border-b border-zinc-200/80 last:border-b-0">
+                        <td className="w-[40%] align-top px-4 py-3.5 font-semibold text-[#071422] md:px-5">{row.title}</td>
+                        <td className="align-top px-4 py-3.5 leading-relaxed text-zinc-600 md:px-5">{row.desc}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </section>
 
-        <section id="compare" className="scroll-mt-24 border-b border-[#d7dde3] bg-white px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px]">
-            <p className="pt-eyebrow mb-4 text-center">Differentiation</p>
-            <h2 className="pt-h2 text-center text-2xl md:text-3xl">Built for simultaneous live feeds</h2>
-            <p className="mx-auto mt-4 max-w-2xl text-center text-[17px] text-[#3d4d5c]">
-              Protent targets continuous live video at scale: many simultaneous feeds, supervisor workflows, and CJIS-sensitive
-              data.
+        <section id="compare" className="scroll-mt-20 border-b border-zinc-200/90 bg-white py-20 md:py-28">
+          <div className="pt-section">
+            <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Scope</p>
+            <h2 className="pt-h2 mt-4 max-w-[640px] text-3xl md:text-4xl md:leading-tight">Built for simultaneous live feeds.</h2>
+            <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-zinc-600">
+              Continuous live video at scale: many feeds, supervisor workflows, CJIS-sensitive data.
             </p>
-            <div className="mt-12 grid gap-6 md:grid-cols-2">
-              <div className="border border-[#d7dde3] bg-[#f0f3f6] p-8 md:p-10">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[#5a6b7a]">Common setup</p>
-                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-[#3d4d5c]">
+            <div className="mt-14 grid gap-6 md:grid-cols-2 md:gap-8">
+              <div className="rounded-2xl border border-zinc-200/90 bg-zinc-50 p-8 md:p-10">
+                <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Common setup</p>
+                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-zinc-600">
                   <li>Large walls depend on manual scanning or review of stored recordings in the VMS.</li>
                   <li>Search is often metadata- or keyword-based.</li>
                   <li>Cross-camera follow-up requires switching contexts between player views.</li>
                 </ul>
               </div>
-              <div className="border border-[#071422] bg-[#071422] p-8 text-white md:p-10">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/70">Protent</p>
-                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/90">
+              <div className="rounded-2xl border border-[#071422] bg-[#071422] p-8 text-white shadow-lg shadow-zinc-900/10 md:p-10">
+                <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">Protent</p>
+                <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/88">
                   <li>Behavioral and situational signals on continuous live feeds.</li>
                   <li>Natural language search on active streams; stored video stays in your VMS.</li>
                   <li>CJIS-aligned architecture and controls for law enforcement video and intelligence data.</li>
@@ -431,71 +533,70 @@ const App = () => {
           </div>
         </section>
 
-        <section id="security" className="scroll-mt-24 border-b border-[#d7dde3] bg-[#f0f3f6] px-5 py-16 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[1200px]">
-            <div className="grid gap-0 border border-[#d7dde3] bg-white md:grid-cols-2">
-              <div className="border-b border-[#d7dde3] p-10 md:border-b-0 md:border-r md:p-12">
-                <Lock className="h-6 w-6 text-[#0b5cab]" strokeWidth={1.75} />
-                <h2 className="pt-h2 mt-6 text-2xl md:text-3xl">CJIS-aligned security</h2>
-                <p className="mt-4 text-[15px] leading-relaxed text-[#3d4d5c]">
+        <section id="security" className="scroll-mt-20 border-b border-zinc-200/90 bg-zinc-50 py-20 md:py-28">
+          <div className="pt-section">
+            <div className="overflow-hidden rounded-3xl border border-zinc-200/90 bg-white shadow-sm md:grid md:grid-cols-2">
+              <div className="p-10 md:p-14">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0b5cab]/10">
+                  <Lock className="h-5 w-5 text-[#0b5cab]" strokeWidth={2} />
+                </div>
+                <h2 className="pt-h2 mt-8 text-2xl md:text-3xl">CJIS-aligned security</h2>
+                <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
                   Encryption, access control, and audit logging are built into the product architecture for public-safety video
                   and intelligence workloads.
                 </p>
               </div>
-              <div className="flex flex-col justify-center p-10 md:p-12">
-                <div className="border-l-2 border-[#0b5cab] bg-[#f0f3f6] pl-5 pr-4 py-4">
-                  <p className="text-[15px] leading-relaxed text-[#3d4d5c]">
-                    Data custody, access policy, and audit requirements are addressed in the product design.
-                  </p>
-                </div>
+              <div className="flex flex-col justify-center border-t border-zinc-200/90 bg-zinc-50/80 p-10 md:border-l md:border-t-0 md:p-14">
+                <p className="text-[16px] leading-relaxed text-zinc-600">
+                  Data custody, access policy, and audit requirements are addressed in the product design.
+                </p>
                 <a
                   href={CALENDLY_DEMO}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-8 inline-flex w-fit items-center gap-2 text-[14px] font-semibold text-[#0b5cab] underline decoration-[#b8c9d9] underline-offset-4 transition hover:decoration-[#0b5cab]"
+                  className="mt-8 inline-flex w-fit items-center gap-2 rounded-full border border-zinc-300 bg-white px-5 py-2.5 text-[13px] font-semibold text-[#071422] shadow-sm transition hover:border-zinc-400"
                 >
-                  Schedule a security discussion
-                  <ArrowRight className="h-4 w-4" />
+                  Security discussion
+                  <ArrowRight className="h-3.5 w-3.5" />
                 </a>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="border-b border-[#d7dde3] bg-white px-5 py-14 md:px-10 md:py-20">
-          <div className="mx-auto max-w-[640px] text-center">
-            <h2 className="pt-h2 text-xl md:text-2xl">Schedule a briefing</h2>
-            <p className="mt-3 text-[16px] text-[#3d4d5c]">
-              Video topology, signal requirements, and deployment steps with your technical and command staff.
+        <section className="border-b border-zinc-200/90 bg-[#0c0f14] py-16 md:py-24">
+          <div className="pt-section text-center">
+            <h2 className="pt-h2 text-2xl text-white md:text-3xl">Brief your command and video teams.</h2>
+            <p className="mx-auto mt-4 max-w-lg text-[16px] text-zinc-400">
+              Video topology, signal requirements, and deployment steps with technical and command staff.
             </p>
             <a
               href={CALENDLY_DEMO}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 bg-[#071422] px-8 py-3.5 text-[14px] font-semibold text-white transition hover:bg-[#0c2438]"
+              className="mt-10 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] transition hover:bg-zinc-100"
             >
-              Book a Demo
+              Book a demo
               <ArrowRight className="h-4 w-4" />
             </a>
           </div>
         </section>
       </main>
 
-      <footer className="bg-[#071422] px-5 py-14 text-white md:px-10">
-        <div className="mx-auto grid max-w-[1200px] gap-12 md:grid-cols-4">
+      <footer className="bg-[#071422] px-5 py-16 text-white md:px-8">
+        <div className="mx-auto grid max-w-[1180px] gap-14 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <LogoMark size={32} stroke="#ffffff" />
-              <span className="text-[17px] font-semibold tracking-tight">Protent</span>
+              <LogoMark size={30} stroke="#ffffff" />
+              <span className="text-[16px] font-semibold tracking-tight">Protent</span>
             </div>
-            <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/65">
-              Live-feed analysis, natural language search on active streams, and CJIS-oriented security for public safety
-              agencies.
+            <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/60">
+              Live-feed analysis, natural language search on active streams, CJIS-oriented security for public safety agencies.
             </p>
           </div>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Platform</p>
-            <ul className="mt-4 space-y-3 text-[14px] text-white/70">
+            <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Platform</p>
+            <ul className="mt-4 space-y-3 text-[14px] text-white/65">
               <li>
                 <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-white">
                   Capabilities
@@ -514,8 +615,8 @@ const App = () => {
             </ul>
           </div>
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/45">Company</p>
-            <ul className="mt-4 space-y-3 text-[14px] text-white/70">
+            <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Company</p>
+            <ul className="mt-4 space-y-3 text-[14px] text-white/65">
               <li>
                 <a
                   href="https://www.linkedin.com/company/protentai/"
@@ -535,7 +636,7 @@ const App = () => {
             </ul>
           </div>
         </div>
-        <p className="mx-auto mt-14 max-w-[1200px] border-t border-white/10 pt-8 text-center text-[12px] text-white/45">
+        <p className="mx-auto mt-16 max-w-[1180px] border-t border-white/10 pt-8 text-center text-[12px] text-white/40">
           © {new Date().getFullYear()} Protent. All rights reserved.
         </p>
       </footer>

@@ -13,10 +13,14 @@
 
 @layer base {
   body {
-    @apply bg-white antialiased text-[#071422];
-    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-    font-feature-settings: "kern" 1, "liga" 1;
+    @apply antialiased text-[#071422];
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-feature-settings: 'kern' 1, 'liga' 1;
   }
+}
+
+.font-mono-pt {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
 @layer components {
@@ -42,14 +46,15 @@
     @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5a6b7a];
   }
   .pt-h1 {
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
     @apply font-semibold tracking-tight text-[#071422];
   }
   .pt-h2 {
-    font-family: 'IBM Plex Sans', system-ui, sans-serif;
     @apply font-semibold tracking-tight text-[#071422];
   }
   .pt-panel {
-    @apply border border-[#d7dde3] bg-white;
+    @apply rounded-2xl border border-zinc-200/90 bg-white shadow-sm;
+  }
+  .pt-section {
+    @apply mx-auto max-w-[1180px] px-5 md:px-8;
   }
 }
