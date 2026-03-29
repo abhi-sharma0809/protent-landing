@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Custom styles only. Utilities come from the Tailwind CDN (class names in TSX). */
 
 :root {
   --pt-ink: #071422;
@@ -11,50 +9,55 @@
   --pt-accent: #0b5cab;
 }
 
-@layer base {
-  body {
-    @apply antialiased text-[#071422];
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-    font-feature-settings: 'kern' 1, 'liga' 1;
-  }
-}
-
 .font-mono-pt {
   font-family: 'JetBrains Mono', ui-monospace, monospace;
 }
 
-@layer components {
-  @media (prefers-reduced-motion: reduce) {
-    .hero-video {
-      display: none !important;
-    }
+@media (prefers-reduced-motion: reduce) {
+  .hero-video {
+    display: none !important;
   }
+}
 
-  /* Thin spec grid + slight cool lift on the right; keeps hero readable, not “sci‑fi UI” */
-  .hero-intel-overlay {
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-      linear-gradient(110deg, transparent 0%, transparent 42%, rgba(11, 92, 171, 0.055) 100%);
-    background-size: 44px 44px, 44px 44px, 100% 100%;
-  }
+.hero-intel-overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(110deg, transparent 0%, transparent 42%, rgba(11, 92, 171, 0.055) 100%);
+  background-size: 44px 44px, 44px 44px, 100% 100%;
+}
 
-  .pt-eyebrow {
-    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-[#5a6b7a];
-  }
-  .pt-h1 {
-    @apply font-semibold tracking-tight text-[#071422];
-  }
-  .pt-h2 {
-    @apply font-semibold tracking-tight text-[#071422];
-  }
-  .pt-panel {
-    @apply rounded-2xl border border-zinc-200/90 bg-white shadow-sm;
-  }
-  .pt-section {
-    @apply mx-auto max-w-[1180px] px-5 md:px-8;
-  }
+.pt-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: #5a6b7a;
+}
+
+.pt-h1,
+.pt-h2 {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.pt-panel {
+  border-radius: 1rem;
+  border: 1px solid rgba(228, 228, 231, 0.9);
+  background: #fff;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+}
+
+/* Horizontal layout shell. Must be plain CSS (Vite build does not run PostCSS/Tailwind on this file). */
+.pt-section {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(1.5rem, 5vw, 3rem);
+  padding-right: clamp(1.5rem, 5vw, 3rem);
 }
