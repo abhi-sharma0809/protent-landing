@@ -12,7 +12,7 @@ const INK = '#071422';
 /** Optional full-bleed MP4; takes precedence over the default hero photograph. */
 const HERO_FULL_BLEED_URL = (import.meta.env.VITE_HERO_VIDEO_URL as string | undefined)?.trim() || '';
 
-/** Default hero still (SOC / command floor). Override with absolute or root-relative URL. */
+/** Default hero still (SOC-style imagery). Override with absolute or root-relative URL. */
 const HERO_IMAGE_URL =
   (import.meta.env.VITE_HERO_IMAGE_URL as string | undefined)?.trim() || '/hero-soc.png';
 
@@ -569,14 +569,14 @@ const App = () => {
                 </div>
                 <h2 className="pt-h2 mt-8 text-2xl text-[#071422] md:text-3xl">Security your chain of command can live with</h2>
                 <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
-                  Data is encrypted in motion and at rest. Access is role-based. There’s an audit trail for who viewed what. That’s
-                  part of the product, not an afterthought.
+                  Data is encrypted in motion and at rest. Access is role-based. Who viewed what gets logged on the same platform
+                  your team uses day to day.
                 </p>
               </div>
               <div className="flex flex-col justify-center border-t border-zinc-200/90 bg-zinc-50/80 p-10 md:border-l md:border-t-0 md:p-14">
                 <p className="text-[16px] leading-relaxed text-zinc-600">
-                  That matters when your IT and legal teams ask hard questions. We built Protent so those answers are already in
-                  the design, not patched in later.
+                  When IT and legal ask how footage is protected and who accessed it, you show them the controls and the audit trail
+                  in the running product.
                 </p>
                 <a
                   href={CALENDLY_DEMO}
@@ -596,8 +596,8 @@ const App = () => {
           <div className="pt-section text-center">
             <h2 className="pt-h2 text-2xl text-white md:text-3xl">See it on your own cameras.</h2>
             <p className="mx-auto mt-4 max-w-lg text-[16px] text-zinc-400">
-              Bring your watch-floor reality. We’ll show live situation reads, escalation signals, and search on feeds that look
-              like yours. If it fits, you’ll know in one session.
+              Bring your own feeds. We’ll show live situation reads, escalation signals, and search on video that looks like what
+              you already run. If it fits, you’ll know in one session.
             </p>
             <a
               href={CALENDLY_DEMO}
@@ -620,8 +620,7 @@ const App = () => {
               <span className="text-[16px] font-semibold tracking-tight">Protent</span>
             </div>
             <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/60">
-              Understand live video, catch problems early, and search with normal language. For law enforcement and security watch
-              floors.
+              Understand live video, catch problems early, and search with normal language. For law enforcement and security teams.
             </p>
           </div>
           <div>
