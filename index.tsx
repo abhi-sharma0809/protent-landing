@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Lock, Linkedin, ArrowRight } from 'lucide-react';
+import { RulerCarousel } from '@/components/ui/ruler-carousel';
 import './globals.css';
 
 const CALENDLY_DEMO =
@@ -9,58 +10,19 @@ const CALENDLY_DEMO =
 
 const INK = '#071422';
 
-/** Optional full-bleed MP4; takes precedence over the default hero photograph. */
-const HERO_FULL_BLEED_URL = (import.meta.env.VITE_HERO_VIDEO_URL as string | undefined)?.trim() || '';
+const HERO_DEMO_VIDEO = '/webdemo.mov';
 
-/** Default hero still (SOC-style imagery). Override with absolute or root-relative URL. */
-const HERO_IMAGE_URL =
-  (import.meta.env.VITE_HERO_IMAGE_URL as string | undefined)?.trim() || '/hero-soc.png';
+const TRUSTED_ITEMS = [
+  { id: 1, title: 'Law Enforcement' },
+  { id: 2, title: 'School Districts' },
+  { id: 3, title: 'College Campuses' },
+  { id: 4, title: 'Stadiums' },
+  { id: 5, title: 'Public Housing' },
+];
 
 const LOGO_STROKE_USER_UNITS = 7;
 
-function HeroBackdropOverlays({ variant }: { variant: 'media' | 'video' }) {
-  const specGrid = variant === 'video';
-  const hideOnReduce = specGrid;
-
-  return (
-    <>
-      {specGrid ? <div className="hero-intel-overlay motion-reduce:hidden" aria-hidden /> : null}
-      {hideOnReduce ? (
-        <div className="absolute inset-0 hidden bg-[#071422] motion-reduce:block" aria-hidden />
-      ) : null}
-      <div
-        className={
-          variant === 'media'
-            ? 'absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/78 via-[28%] to-[#071422]/14'
-            : 'absolute inset-0 bg-gradient-to-r from-[#071422] via-[#071422]/92 to-[#071422]/50 motion-reduce:hidden'
-        }
-        aria-hidden
-      />
-      <div
-        className={
-          variant === 'media'
-            ? 'absolute inset-0 bg-gradient-to-t from-[#071422]/82 via-transparent to-[#071422]/40'
-            : 'absolute inset-0 bg-gradient-to-t from-[#071422]/92 via-transparent to-[#071422]/45 motion-reduce:hidden'
-        }
-        aria-hidden
-      />
-      {variant === 'media' ? (
-        <div
-          className="absolute inset-0 bg-gradient-to-r from-[#071422]/90 from-[0%] via-transparent via-[38%] to-transparent to-[55%]"
-          aria-hidden
-        />
-      ) : null}
-      {variant === 'media' ? (
-        <div
-          className="absolute inset-0 bg-[#0b5cab]/[0.05] mix-blend-overlay motion-reduce:mix-blend-normal motion-reduce:bg-transparent"
-          aria-hidden
-        />
-      ) : null}
-    </>
-  );
-}
-
-function HeroSingleVideoBackdrop({ src }: { src: string }) {
+function HeroWebDemo() {
   const ref = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -72,47 +34,28 @@ function HeroSingleVideoBackdrop({ src }: { src: string }) {
     tryPlay();
     v.addEventListener('canplay', tryPlay);
     return () => v.removeEventListener('canplay', tryPlay);
-  }, [src]);
+  }, []);
 
   return (
-    <div className="pointer-events-none absolute inset-0 z-0">
-      <video
-        ref={ref}
-        className="hero-video absolute inset-0 h-full w-full object-cover motion-reduce:hidden"
-        src={src}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden
-      />
-      <HeroBackdropOverlays variant="video" />
+    <div className="w-full min-w-0">
+      <div className="w-full border border-white leading-none">
+        <video
+          ref={ref}
+          className="block h-auto w-full max-h-[min(82vh,920px)] motion-reduce:hidden"
+          src={HERO_DEMO_VIDEO}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          aria-label="Screen recording of the Protent product"
+        />
+        <div className="hidden max-w-[min(100vw-3rem,560px)] flex-col items-center justify-center px-6 py-8 text-center text-[13px] leading-normal text-white/90 motion-reduce:flex">
+          Demo video is hidden when reduced motion is enabled.
+        </div>
+      </div>
     </div>
   );
-}
-
-function HeroPhotoBackdrop({ src }: { src: string }) {
-  return (
-    <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-[#071422]">
-      <img
-        src={src}
-        alt=""
-        className="absolute left-1/2 top-1/2 max-w-none -translate-x-1/2 -translate-y-1/2 object-cover object-[34%_46%] h-[112%] w-[112%] md:h-[108%] md:w-[108%] md:object-[36%_48%]"
-        decoding="async"
-        fetchPriority="high"
-        aria-hidden
-      />
-      <HeroBackdropOverlays variant="media" />
-    </div>
-  );
-}
-
-function HeroBackdrop() {
-  if (HERO_FULL_BLEED_URL) {
-    return <HeroSingleVideoBackdrop src={HERO_FULL_BLEED_URL} />;
-  }
-  return <HeroPhotoBackdrop src={HERO_IMAGE_URL} />;
 }
 
 function UiPanel({
@@ -311,56 +254,78 @@ const App = () => {
       </header>
 
       <main>
-        <section className="relative min-h-[88vh] overflow-hidden">
-          <HeroBackdrop />
-          <div className="relative z-10 flex w-full min-h-[88vh] flex-col items-center justify-center py-24">
-            <div className="pt-section text-center">
-              <div className="mx-auto max-w-[820px]">
-              <p className="font-mono-pt mb-6 text-[11px] font-medium uppercase tracking-[0.2em] text-white/55">
-                Proactive prevention on live video
-              </p>
-              <h1 className="pt-h1 text-[2.25rem] leading-[1.12] text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] md:text-5xl lg:text-[3.25rem] lg:leading-[1.08]">
-                Understand the situation. Catch escalation before it becomes a crime.
-              </h1>
-              <p className="mx-auto mt-8 max-w-[560px] text-[17px] font-medium leading-relaxed text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.45)] md:text-lg">
-                Protent helps watch command understand live video: how people sound, how they’re acting, and what’s going on in the
-                frame. Ask questions in normal language to search across your feeds. Encryption, access controls, and audit logs
-                for law enforcement.
-              </p>
-              <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <a
-                  href={CALENDLY_DEMO}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] shadow-lg shadow-black/15 transition hover:bg-zinc-100"
-                >
-                  Book a free demo
-                  <ArrowRight className="h-4 w-4" aria-hidden />
-                </a>
-                <button
-                  type="button"
-                  onClick={() => scrollToSection('product')}
-                  className="text-[14px] font-semibold text-white/85 underline decoration-white/25 underline-offset-[6px] transition hover:decoration-white/50"
-                >
-                  See how it works
-                </button>
-              </div>
-              <div className="mt-14 flex flex-wrap justify-center gap-2.5">
-                {[
-                  'Early escalation signals',
-                  'Live cameras only',
-                  'Encrypted · access-controlled · audited',
-                ].map((label) => (
-                  <span
-                    key={label}
-                    className="rounded-full border border-white/12 bg-white/[0.06] px-3.5 py-1.5 text-[12px] font-medium text-white/70 backdrop-blur-sm"
-                  >
-                    {label}
-                  </span>
-                ))}
-              </div>
+        <section className="relative min-h-[88vh] overflow-hidden bg-[#071422]">
+          <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#0b5cab]/15 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-[#071422]/80" />
+          </div>
+          <div className="relative z-10 flex min-h-[88vh] w-full items-center py-20 md:py-24 lg:py-28">
+            <div className="pt-section-hero w-full">
+              <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10 lg:items-center xl:gap-16">
+                <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col items-center text-center lg:col-span-6 lg:mx-0 lg:max-w-none lg:items-start lg:self-center lg:pr-6 lg:text-left xl:pr-10">
+                  <p className="font-mono-pt mb-5 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75">
+                    Proactive prevention on live video
+                  </p>
+                  <h1 className="pt-h1 text-[2.25rem] leading-[1.14] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.45)] md:text-[2.75rem] md:leading-[1.1] lg:text-[2.875rem] lg:leading-[1.07]">
+                    Understand the situation. Catch escalation before it becomes a crime.
+                  </h1>
+                  <p className="mt-6 max-w-[52ch] text-[16px] font-normal leading-[1.65] text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.35)] md:mt-7 md:max-w-[60ch] md:text-[17px] md:leading-relaxed lg:max-w-none">
+                    Protent helps watch command understand live video: how people sound, how they’re acting, and what’s going on in
+                    the frame. Ask questions in normal language to search across your feeds. Encryption, access controls, and audit
+                    logs for law enforcement.
+                  </p>
+                  <div className="mt-9 flex w-full max-w-lg flex-col items-center gap-4 sm:flex-row sm:justify-center md:mt-10 lg:max-w-none lg:justify-start">
+                    <a
+                      href={CALENDLY_DEMO}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-[14px] font-semibold text-[#071422] shadow-lg shadow-black/15 transition hover:bg-zinc-100"
+                    >
+                      Book a free demo
+                      <ArrowRight className="h-4 w-4" aria-hidden />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => scrollToSection('product')}
+                      className="text-[14px] font-semibold text-white underline decoration-white/35 underline-offset-[6px] transition hover:decoration-white/60"
+                    >
+                      See how it works
+                    </button>
+                  </div>
+                  <div className="mt-10 flex w-full max-w-2xl flex-wrap justify-center gap-2 md:mt-11 lg:max-w-none lg:justify-start">
+                    {[
+                      'Early escalation signals',
+                      'Live cameras only',
+                      'Encrypted · access-controlled · audited',
+                    ].map((label) => (
+                      <span
+                        key={label}
+                        className="rounded-full border border-white/25 bg-white/[0.08] px-3.5 py-1.5 text-[12px] font-medium text-white/90 backdrop-blur-sm"
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="min-w-0 lg:col-span-6">
+                  <HeroWebDemo />
+                </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        <section className="border-b border-zinc-200/90 bg-[#fafafa] py-20 md:py-28 overflow-hidden">
+          <div className="pt-section">
+            <div className="text-center mb-12">
+              <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.2em] text-zinc-500">
+                Who we serve
+              </p>
+              <h2 className="pt-h2 mt-4 text-2xl font-semibold text-[#071422] md:text-3xl">
+                Trusted by teams who run on live operations
+              </h2>
+            </div>
+            <RulerCarousel originalItems={TRUSTED_ITEMS} />
           </div>
         </section>
 

@@ -61,3 +61,14 @@
   padding-left: clamp(1.5rem, 5vw, 3rem);
   padding-right: clamp(1.5rem, 5vw, 3rem);
 }
+
+/* Hero only: wider canvas + tighter side gutters so copy and demo can scale up. */
+.pt-section-hero {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1560px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: clamp(0.875rem, 2.25vw, 1.75rem);
+  padding-right: clamp(0.875rem, 2.25vw, 1.75rem);
+}
