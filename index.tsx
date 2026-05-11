@@ -18,6 +18,7 @@ const TRUSTED_ITEMS = [
   { id: 3, title: 'College Campuses' },
   { id: 4, title: 'Stadiums' },
   { id: 5, title: 'Public Housing' },
+  { id: 6, title: 'Critical Infrastructure' },
 ];
 
 const LOGO_STROKE_USER_UNITS = 7;
