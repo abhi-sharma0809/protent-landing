@@ -8,8 +8,6 @@ const CALENDLY_DEMO =
   (import.meta.env.VITE_CALENDLY_DEMO_URL as string | undefined)?.trim() ||
   'https://calendly.com/srihan-protent/demo';
 
-const INK = '#071422';
-
 const HERO_DEMO_VIDEO = '/webdemo.mov';
 
 const TRUSTED_ITEMS = [
@@ -20,8 +18,6 @@ const TRUSTED_ITEMS = [
   { id: 5, title: 'Public Housing' },
   { id: 6, title: 'Critical Infrastructure' },
 ];
-
-const LOGO_STROKE_USER_UNITS = 7;
 
 function HeroWebDemo() {
   const ref = useRef<HTMLVideoElement>(null);
@@ -83,32 +79,34 @@ function UiPanel({
   );
 }
 
-function MockSignalAnalysis() {
+function MockActivityAlerts() {
   return (
-    <UiPanel eyebrow="Signal console" badge="Live ingest">
-      <div className="space-y-3">
-        <div className="flex gap-2">
-          {['CAM-104', 'CAM-212', 'LOT-A'].map((id) => (
-            <div
-              key={id}
-              className="flex-1 rounded-lg bg-zinc-950/80 py-6 text-center font-mono-pt text-[9px] font-medium uppercase tracking-wider text-zinc-600 ring-1 ring-white/[0.06]"
-            >
-              {id}
+    <UiPanel eyebrow="Alert queue" badge="Live feeds">
+      <div className="space-y-2">
+        {[
+          { cam: 'CAM-104', activity: 'Physical altercation', time: 'Just now', urgent: true },
+          { cam: 'CAM-212', activity: 'Unauthorized entry', time: '12s ago', urgent: true },
+          { cam: 'LOT-A', activity: 'Vehicle in restricted zone', time: '41s ago', urgent: false },
+        ].map((row) => (
+          <div
+            key={row.cam}
+            className="flex items-start justify-between gap-3 rounded-lg bg-zinc-950/55 px-3 py-2.5 ring-1 ring-white/[0.05]"
+          >
+            <div className="min-w-0">
+              <p className="font-mono-pt text-[10px] text-zinc-500">{row.cam}</p>
+              <p className="mt-0.5 text-[11px] font-medium text-zinc-200">{row.activity}</p>
             </div>
-          ))}
-        </div>
-        <div className="rounded-lg bg-zinc-950/60 p-3 ring-1 ring-white/[0.05]">
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-zinc-400">Acoustic / verbal fusion</span>
-            <span className="font-mono-pt text-amber-400/90">Elevated</span>
+            <span
+              className={`shrink-0 font-mono-pt text-[9px] font-semibold uppercase tracking-wide ${
+                row.urgent ? 'text-amber-400/90' : 'text-zinc-600'
+              }`}
+            >
+              {row.time}
+            </span>
           </div>
-          <div className="mt-2 h-8 w-full rounded bg-[#0b5cab]/20">
-            <div className="h-full w-[72%] rounded bg-[#0b5cab]/55" />
-          </div>
-        </div>
-        <div className="flex items-center justify-between rounded-lg bg-zinc-950/50 px-3 py-2 font-mono-pt text-[10px] text-zinc-500 ring-1 ring-white/[0.04]">
-          <span>Scene context</span>
-          <span className="text-zinc-300">Streaming</span>
+        ))}
+        <div className="rounded-lg bg-zinc-950/45 px-3 py-2 font-mono-pt text-[10px] text-zinc-500 ring-1 ring-white/[0.04]">
+          Operator verifies before dispatch · No auto-response
         </div>
       </div>
     </UiPanel>
@@ -150,13 +148,13 @@ function MockNlSearch() {
 
 function MockDetection() {
   return (
-    <UiPanel eyebrow="Object pipeline" badge="CV">
+    <UiPanel eyebrow="Activity detection" badge="Configured rules">
       <div className="grid grid-cols-2 gap-2">
         {[
-          { label: 'Vehicle class', v: 'SUV · conf 0.91' },
-          { label: 'Evidence-class', v: 'Bag · tracked' },
-          { label: 'Weapon cue', v: 'None' },
-          { label: 'Re-ID', v: 'Node handoff' },
+          { label: 'Weapon visible', v: 'Detected · CAM-218' },
+          { label: 'Vehicle type', v: 'SUV · restricted lot' },
+          { label: 'Crowd density', v: 'Above threshold' },
+          { label: 'Perimeter breach', v: 'Fence line · east' },
         ].map((row) => (
           <div key={row.label} className="rounded-lg bg-zinc-950/55 px-2.5 py-2 ring-1 ring-white/[0.05]">
             <p className="font-mono-pt text-[9px] font-medium uppercase tracking-wide text-zinc-600">{row.label}</p>
@@ -168,46 +166,15 @@ function MockDetection() {
   );
 }
 
-function ProtentLogo({ size = 100, stroke = 'currentColor' }: { size?: number; stroke?: string }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 100 100"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-      aria-hidden
-    >
-      <path
-        d="M 35 30 A 20 20 0 0 0 35 70"
-        stroke={stroke}
-        strokeWidth={LOGO_STROKE_USER_UNITS}
-        strokeLinecap="square"
-        fill="none"
-      />
-      <path
-        d="M 65 30 A 20 20 0 0 1 65 70"
-        stroke={stroke}
-        strokeWidth={LOGO_STROKE_USER_UNITS}
-        strokeLinecap="square"
-        fill="none"
-      />
-      <line
-        x1="50"
-        y1="35"
-        x2="50"
-        y2="65"
-        stroke={stroke}
-        strokeWidth={LOGO_STROKE_USER_UNITS}
-        strokeLinecap="square"
-      />
-    </svg>
-  );
-}
-
-const LogoMark = ({ size = 32, stroke = INK }: { size?: number; stroke?: string }) => (
-  <ProtentLogo size={size} stroke={stroke} />
+const LogoMark = ({ size = 32, className = '' }: { size?: number; className?: string }) => (
+  <img
+    src="/logo.png"
+    alt=""
+    width={size}
+    height={size}
+    className={`shrink-0 object-contain ${className}`}
+    aria-hidden
+  />
 );
 
 const App = () => {
@@ -225,7 +192,7 @@ const App = () => {
             className="flex items-center gap-2.5 rounded-lg outline-none ring-[#0b5cab] focus-visible:ring-2 focus-visible:ring-offset-2"
             aria-label="Protent home"
           >
-            <LogoMark size={28} stroke={INK} />
+            <LogoMark size={28} className="brightness-0" />
             <span className="text-[16px] font-semibold tracking-tight text-[#071422]">Protent</span>
           </button>
           <div className="hidden items-center gap-9 text-[14px] font-medium text-zinc-600 md:flex">
@@ -265,15 +232,15 @@ const App = () => {
               <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-10 lg:items-center xl:gap-16">
                 <div className="mx-auto flex w-full min-w-0 max-w-2xl flex-col items-center text-center lg:col-span-6 lg:mx-0 lg:max-w-none lg:items-start lg:self-center lg:pr-6 lg:text-left xl:pr-10">
                   <p className="font-mono-pt mb-5 text-[11px] font-medium uppercase tracking-[0.2em] text-white/75">
-                    Proactive prevention on live video
+                    Real-time video awareness
                   </p>
                   <h1 className="pt-h1 text-[2.25rem] leading-[1.14] text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.45)] md:text-[2.75rem] md:leading-[1.1] lg:text-[2.875rem] lg:leading-[1.07]">
-                    Understand the situation. Catch escalation before it becomes a crime.
+                    Catch critical incidents as they unfold.
                   </h1>
                   <p className="mt-6 max-w-[52ch] text-[16px] font-normal leading-[1.65] text-white [text-shadow:0_1px_8px_rgba(0,0,0,0.35)] md:mt-7 md:max-w-[60ch] md:text-[17px] md:leading-relaxed lg:max-w-none">
-                    Protent helps watch command understand live video: how people sound, how they’re acting, and what’s going on in
-                    the frame. Ask questions in normal language to search across your feeds. Encryption, access controls, and audit
-                    logs for law enforcement.
+                    Your camera count keeps growing, but your team can only watch so many screens. Protent monitors every live feed,
+                    flags the activity you care about, and lets operators search across cameras in plain language. Your people stay
+                    in control of every decision.
                   </p>
                   <div className="mt-9 flex w-full max-w-lg flex-col items-center gap-4 sm:flex-row sm:justify-center md:mt-10 lg:max-w-none lg:justify-start">
                     <a
@@ -295,9 +262,9 @@ const App = () => {
                   </div>
                   <div className="mt-10 flex w-full max-w-2xl flex-wrap justify-center gap-2 md:mt-11 lg:max-w-none lg:justify-start">
                     {[
-                      'Early escalation signals',
+                      'Activity-based alerts',
                       'Live cameras only',
-                      'Encrypted · access-controlled · audited',
+                      'Human verification · no auto-dispatch',
                     ].map((label) => (
                       <span
                         key={label}
@@ -334,26 +301,28 @@ const App = () => {
           <div className="pt-section">
             <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Platform</p>
             <h2 className="pt-h2 mt-5 max-w-[720px] text-3xl text-[#071422] md:text-4xl md:leading-tight">
-              Same camera wall. A clearer read before things go wrong.
+              More cameras than eyes. Alerts when activity shows up.
             </h2>
             <p className="mt-6 max-w-2xl text-[17px] leading-relaxed text-zinc-600">
-              You keep running the feeds you already have. Protent adds three things: it reads tone, behavior, and the scene; it
-              lets you search in plain English; and it can flag weapons, vehicles, and other objects that matter in the moment.
+              You keep the feeds you already run. Protent watches them for the activity you care about, like fights, perimeter
+              breaches, weapons, or vehicles in restricted areas, then sends verified alerts to watch command. Search live feeds in
+              plain English when you need to narrow the picture.
             </p>
 
             <div className="mt-24 space-y-28 md:mt-32 md:space-y-36">
               <div className="grid items-start gap-14 lg:grid-cols-2 lg:items-center lg:gap-x-16 lg:gap-y-0 xl:gap-x-24">
                 <div className="min-w-0 pr-0 lg:pr-4">
                   <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">
-                    What’s happening? Is it getting worse?
+                    Alerts when configured activity appears
                   </h3>
                   <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
-                    Protent picks up how people sound, how the scene is shifting, and when tension is rising. Your team gets that
-                    read on the live picture so you can step in early, not only when you’re rewinding tape after the fact.
+                    Your agency decides what Protent looks for: physical altercations, unauthorized entry, fire or smoke, vehicles
+                    where they shouldn’t be. When that activity shows up in a feed, an alert lands on the live wall with camera
+                    context so operators can verify and respond. Detection informs, your team decides.
                   </p>
                 </div>
                 <div className="min-w-0 lg:pl-2">
-                  <MockSignalAnalysis />
+                  <MockActivityAlerts />
                 </div>
               </div>
               <div className="grid items-start gap-14 lg:grid-cols-2 lg:items-center lg:gap-x-16 lg:gap-y-0 xl:gap-x-24">
@@ -370,10 +339,11 @@ const App = () => {
               </div>
               <div className="grid items-start gap-14 lg:grid-cols-2 lg:items-center lg:gap-x-16 lg:gap-y-0 xl:gap-x-24">
                 <div className="min-w-0 lg:pr-4">
-                  <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">Objects that matter</h3>
+                  <h3 className="text-xl font-semibold tracking-tight text-[#071422] md:text-2xl">Defined activity, not prediction</h3>
                   <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
-                    Weapons, vehicles, and evidence-type items surfaced on live video. Another signal when a situation is moving
-                    toward harm.
+                    Protent evaluates what is actually visible in the video as it happens. It does not score risk, forecast
+                    behavior, or guess what someone might do next. Alerts reflect what is in the frame right now, like a visible
+                    weapon, crowd conditions, or a perimeter event, not guesses about intent.
                   </p>
                 </div>
                 <div className="min-w-0 lg:pl-2">
@@ -387,8 +357,8 @@ const App = () => {
         <section className="border-b border-zinc-200/90 bg-zinc-50 py-14 md:py-16">
           <div className="pt-section text-center">
             <p className="mx-auto max-w-3xl text-lg font-medium leading-snug text-[#071422] md:text-xl md:leading-snug">
-              Reviewing video after the fact burns hours. Protent pushes escalation and context to the live wall so your people can
-              move while the situation is still open.
+              Most video only gets watched after something has already gone wrong. Protent puts eyes on your live feeds so your
+              team can act while the situation is still open.
             </p>
           </div>
         </section>
@@ -400,8 +370,8 @@ const App = () => {
               Roll it out in three steps.
             </h2>
             <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-zinc-600">
-              Plug in your cameras, turn on live analysis, then use search when you need to narrow things down. Your tech unit
-              can run some of that in parallel if the network allows it.
+              Connect your cameras, configure which activity types trigger alerts, then use plain-language search when you need to
+              follow a person or vehicle across feeds. Your tech unit can run analysis in parallel if the network allows it.
             </p>
             <ol className="mt-16 grid list-none gap-6 md:mt-20 md:grid-cols-3 md:gap-8">
               {[
@@ -412,13 +382,13 @@ const App = () => {
                 },
                 {
                   step: '02',
-                  title: 'Turn on live analysis',
-                  body: 'Tone, behavior, scene, and objects run continuously so watch command sees escalation and context while things are still unfolding.',
+                  title: 'Configure activity detection',
+                  body: 'Choose which cameras and activity types generate alerts. Operators verify events before anything reaches the field.',
                 },
                 {
                   step: '03',
                   title: 'Search when you need it',
-                  body: 'Type what you’re looking for in plain English across live feeds. Follow a person or vehicle across cameras when the system spots a match.',
+                  body: 'Describe a person, vehicle, or scene in plain English across live feeds. Follow matches across cameras on your site.',
                 },
               ].map((block) => (
                 <li key={block.step} className="rounded-2xl border border-zinc-200/90 bg-zinc-50/80 p-6 shadow-sm md:p-8">
@@ -435,10 +405,10 @@ const App = () => {
           <div className="pt-section rounded-3xl border border-zinc-200/90 bg-white p-8 shadow-sm md:p-12 lg:grid lg:grid-cols-12 lg:gap-12 lg:p-14">
             <div className="lg:col-span-5">
               <p className="font-mono-pt text-[11px] font-medium uppercase tracking-[0.16em] text-zinc-500">Operations</p>
-              <h2 className="pt-h2 mt-4 text-2xl text-[#071422] md:text-3xl">Your VMS stays. Protent adds the read.</h2>
+              <h2 className="pt-h2 mt-4 text-2xl text-[#071422] md:text-3xl">Your VMS stays. Protent adds live awareness.</h2>
               <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
-                We don’t replace your VMS. Protent sits on the same live feeds your operators already watch and adds a read on
-                the situation, early escalation cues, and plain-English search. Your recordings and storage stay in the system you
+                We don’t replace your VMS. Protent sits on the same live feeds your operators already watch and adds activity
+                alerts, plain-English search, and cross-camera follow-up. Your recordings and storage stay in the system you
                 already use.
               </p>
             </div>
@@ -458,12 +428,12 @@ const App = () => {
                   <tbody>
                     {[
                       {
-                        title: 'Situation & escalation',
-                        desc: 'Ongoing interpretation of tone, behavior, and scene to flag building tension early.',
+                        title: 'Activity detection',
+                        desc: 'The activity types you configure, like altercations, breaches, weapons, and vehicles, surfaced as alerts on live feeds.',
                       },
                       {
                         title: 'Speed to watch command',
-                        desc: 'Alerts land while the situation is still open, not only after it’s over and you’re on review.',
+                        desc: 'Alerts arrive while events are still unfolding, not only after playback and review.',
                       },
                       {
                         title: 'Plain-language search',
@@ -494,8 +464,12 @@ const App = () => {
             </h2>
             <div className="mt-5 max-w-2xl space-y-4 text-[17px] leading-relaxed text-zinc-600">
               <p>
-                You can’t watch every screen at once. Protent helps your team understand what’s happening across those feeds and
-                catch escalation early, while you still have time to act.
+                You can’t watch every screen at once. Protent keeps eyes on every feed and flags the activity you care about, so
+                operators can verify and act quickly.
+              </p>
+              <p>
+                Protent does not generate risk scores, behavioral predictions, or forecasts about what people might do. It detects
+                observable activity in video and routes alerts to trained personnel who make every operational decision.
               </p>
               <p>
                 Video and alerts use law enforcement grade security: encryption, strict access, and a paper trail of who looked at
@@ -507,7 +481,7 @@ const App = () => {
                 <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-zinc-500">Without Protent</p>
                 <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-zinc-600">
                   <li>You often find out something went wrong from a call, a victim, or hours of playback, not from the live wall.</li>
-                  <li>It’s hard to tell when a situation is going bad until it already has.</li>
+                  <li>Critical activity is missed because no one was watching that camera at that moment.</li>
                   <li>Search is tags and codes, not “gray hoodie heading toward the north lot.”</li>
                 </ul>
               </div>
@@ -515,11 +489,10 @@ const App = () => {
                 <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">With Protent</p>
                 <ul className="mt-6 space-y-4 text-[15px] leading-relaxed text-white/88">
                   <li>
-                    Live read on what’s unfolding, plus escalation cues so watch command can send help or make a call before
-                    things spin out.
+                    Configured activity triggers alerts on the live wall. Operators verify before anything reaches the field.
                   </li>
                   <li>Ask in plain English; answers come from live cameras. Your stored video stays in your VMS.</li>
-                  <li>Built for sensitive law enforcement video: locked-down access, encryption, and audit trails.</li>
+                  <li>No risk scoring or behavioral prediction. Detection informs the response, your team makes the call.</li>
                 </ul>
               </div>
             </div>
@@ -536,7 +509,8 @@ const App = () => {
                 <h2 className="pt-h2 mt-8 text-2xl text-[#071422] md:text-3xl">Security your chain of command can live with</h2>
                 <p className="mt-5 text-[16px] leading-relaxed text-zinc-600">
                   Data is encrypted in motion and at rest. Access is role-based. Who viewed what gets logged on the same platform
-                  your team uses day to day.
+                  your team uses day to day. Activity detection stays within the boundaries your agency sets: your feeds, your
+                  rules, your operators in control.
                 </p>
               </div>
               <div className="flex flex-col justify-center border-t border-zinc-200/90 bg-zinc-50/80 p-10 md:border-l md:border-t-0 md:p-14">
@@ -562,8 +536,8 @@ const App = () => {
           <div className="pt-section text-center">
             <h2 className="pt-h2 text-2xl text-white md:text-3xl">See it on your own cameras.</h2>
             <p className="mx-auto mt-4 max-w-lg text-[16px] text-zinc-400">
-              Bring your own feeds. We’ll show live situation reads, escalation signals, and search on video that looks like what
-              you already run. If it fits, you’ll know in one session.
+              Bring your own feeds. We’ll show activity alerts, plain-language search, and live detection on video that looks like
+              what you already run. If it fits, you’ll know in one session.
             </p>
             <a
               href={CALENDLY_DEMO}
@@ -582,11 +556,11 @@ const App = () => {
         <div className="pt-section grid max-w-none gap-14 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2.5">
-              <LogoMark size={30} stroke="#ffffff" />
+              <LogoMark size={30} />
               <span className="text-[16px] font-semibold tracking-tight">Protent</span>
             </div>
             <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/60">
-              Understand live video, catch problems early, and search with normal language. For law enforcement and security teams.
+              Real-time activity alerts and plain-language search across live camera feeds. For law enforcement and security teams.
             </p>
           </div>
           <div>
