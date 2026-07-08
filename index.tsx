@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { Lock, Linkedin, ArrowRight } from 'lucide-react';
+import { Lock, ArrowRight } from 'lucide-react';
+import { CareersPage } from '@/components/CareersPage';
+import { SiteFooter } from '@/components/SiteFooter';
+import { SiteHeader } from '@/components/SiteHeader';
 import { RulerCarousel } from '@/components/ui/ruler-carousel';
+import { CALENDLY_DEMO } from '@/lib/site';
+import { useClientRouting, usePathname } from '@/lib/usePathname';
 import './globals.css';
-
-const CALENDLY_DEMO =
-  (import.meta.env.VITE_CALENDLY_DEMO_URL as string | undefined)?.trim() ||
-  'https://calendly.com/srihan-protent/demo';
 
 const HERO_DEMO_VIDEO = '/webdemo.mov';
 
@@ -166,60 +167,14 @@ function MockDetection() {
   );
 }
 
-const LogoMark = ({ size = 32, className = '' }: { size?: number; className?: string }) => (
-  <img
-    src="/logo.png"
-    alt=""
-    width={size}
-    height={size}
-    className={`shrink-0 object-contain ${className}`}
-    aria-hidden
-  />
-);
-
-const App = () => {
+const HomePage = ({ pathname }: { pathname: string }) => {
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-[#fafafa] text-[#071422]">
-      <header className="sticky top-0 z-50 border-b border-zinc-200/80 bg-white/85 backdrop-blur-md">
-        <nav className="pt-section flex max-w-none items-center justify-between gap-4 py-3.5">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="flex items-center gap-2.5 rounded-lg outline-none ring-[#0b5cab] focus-visible:ring-2 focus-visible:ring-offset-2"
-            aria-label="Protent home"
-          >
-            <LogoMark size={28} className="brightness-0" />
-            <span className="text-[16px] font-semibold tracking-tight text-[#071422]">Protent</span>
-          </button>
-          <div className="hidden items-center gap-9 text-[14px] font-medium text-zinc-600 md:flex">
-            <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-[#071422]">
-              Platform
-            </button>
-            <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-[#071422]">
-              Deployment
-            </button>
-            <button type="button" onClick={() => scrollToSection('compare')} className="transition hover:text-[#071422]">
-              Scope
-            </button>
-            <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-[#071422]">
-              Security
-            </button>
-          </div>
-          <a
-            href={CALENDLY_DEMO}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex shrink-0 items-center gap-2 rounded-full bg-[#071422] px-5 py-2.5 text-[13px] font-semibold text-white shadow-sm transition hover:bg-[#0c2438]"
-          >
-            Book a free demo
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-          </a>
-        </nav>
-      </header>
+      <SiteHeader pathname={pathname} />
 
       <main>
         <section className="relative min-h-[88vh] overflow-hidden bg-[#071422]">
@@ -552,65 +507,27 @@ const App = () => {
         </section>
       </main>
 
-      <footer className="bg-[#071422] py-16 text-white">
-        <div className="pt-section grid max-w-none gap-14 md:grid-cols-4">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2.5">
-              <LogoMark size={30} />
-              <span className="text-[16px] font-semibold tracking-tight">Protent</span>
-            </div>
-            <p className="mt-5 max-w-sm text-[14px] leading-relaxed text-white/60">
-              Real-time activity alerts and plain-language search across live camera feeds. For law enforcement and security teams.
-            </p>
-          </div>
-          <div>
-            <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Platform</p>
-            <ul className="mt-4 space-y-3 text-[14px] text-white/65">
-              <li>
-                <button type="button" onClick={() => scrollToSection('product')} className="transition hover:text-white">
-                  Capabilities
-                </button>
-              </li>
-              <li>
-                <button type="button" onClick={() => scrollToSection('how')} className="transition hover:text-white">
-                  Deployment
-                </button>
-              </li>
-              <li>
-                <button type="button" onClick={() => scrollToSection('security')} className="transition hover:text-white">
-                  Security
-                </button>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <p className="font-mono-pt text-[10px] font-semibold uppercase tracking-[0.14em] text-white/40">Company</p>
-            <ul className="mt-4 space-y-3 text-[14px] text-white/65">
-              <li>
-                <a
-                  href="https://www.linkedin.com/company/protentai/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 transition hover:text-white"
-                >
-                  <Linkedin className="h-4 w-4" />
-                  LinkedIn
-                </a>
-              </li>
-              <li>
-                <a href={CALENDLY_DEMO} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">
-                  Book a free demo
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <p className="pt-section mt-16 max-w-none border-t border-white/10 pt-8 text-center text-[12px] text-white/40">
-          © {new Date().getFullYear()} Protent. All rights reserved.
-        </p>
-      </footer>
+      <SiteFooter pathname={pathname} />
     </div>
   );
+};
+
+const App = () => {
+  const [pathname, setPathname] = usePathname();
+  useClientRouting(setPathname);
+
+  useEffect(() => {
+    document.title =
+      pathname === '/careers'
+        ? 'Careers | Protent'
+        : 'Protent | Real-time video awareness for law enforcement & security';
+  }, [pathname]);
+
+  if (pathname === '/careers') {
+    return <CareersPage pathname={pathname} />;
+  }
+
+  return <HomePage pathname={pathname} />;
 };
 
 const root = createRoot(document.getElementById('root')!);
