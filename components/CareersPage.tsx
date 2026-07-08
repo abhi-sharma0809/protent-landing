@@ -103,7 +103,7 @@ export function CareersPage({ pathname }: { pathname: string }) {
               href={`mailto:${CAREERS_EMAIL}`}
               className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#071422] px-8 py-3.5 text-[14px] font-semibold text-white transition hover:bg-[#0c2438]"
             >
-              {CAREERS_EMAIL}
+              Contact us
               <ArrowRight className="h-4 w-4" aria-hidden />
             </a>
           </div>
